@@ -1,6 +1,6 @@
-# Zapia
+# JudgeChat
 
-Ferramenta de teste de agentes de IA de atendimento via WhatsApp: a Zapia simula um cliente conversando pelo WhatsApp com o número real do chatbot/agente que você quiser testar, registra a conversa e (opcionalmente) usa uma IA como juiz pra avaliar se o atendimento seguiu um critério esperado.
+Ferramenta de teste de agentes de IA de atendimento via WhatsApp: a JudgeChat simula um cliente conversando pelo WhatsApp com o número real do chatbot/agente que você quiser testar, registra a conversa e (opcionalmente) usa uma IA como juiz pra avaliar se o atendimento seguiu um critério esperado.
 
 Duas formas de rodar:
 
@@ -17,7 +17,7 @@ Configure o `.env` (veja a seção "Provedor de IA" abaixo).
 
 ## Provedor de IA (`AI_PROVIDER`)
 
-A Zapia usa uma IA pra gerar a fala do cliente simulado, os rascunhos de persona/critério e o veredito do juiz (`agent.js`). Qual IA responde é escolhido por uma única variável no `.env`:
+A JudgeChat usa uma IA pra gerar a fala do cliente simulado, os rascunhos de persona/critério e o veredito do juiz (`agent.js`). Qual IA responde é escolhido por uma única variável no `.env`:
 
 ```
 AI_PROVIDER=claude   # claude (padrão) | copilot | gemini | codex
@@ -48,7 +48,7 @@ O menu permite: definir uma persona (nome, personalidade, mensagem de abertura, 
 
 ## Bateria de testes em Gherkin (`batch-runner.js`)
 
-Pensado pro fluxo: um PM escreve um PRD → você gera casos de teste em Gherkin/BDD a partir dele → a Zapia roda cada `Scenario` como sua própria sessão de WhatsApp, sequencialmente, e devolve um veredito por cenário.
+Pensado pro fluxo: um PM escreve um PRD → você gera casos de teste em Gherkin/BDD a partir dele → a JudgeChat roda cada `Scenario` como sua própria sessão de WhatsApp, sequencialmente, e devolve um veredito por cenário.
 
 ```
 node batch-runner.js <pasta-com-arquivos-.feature>
@@ -83,7 +83,7 @@ Quando um cenário só passa com um cliente/cadastro específico já preparado m
     ...
 ```
 
-A Zapia **não prepara o estado da massa** — isso continua manual, feito por quem tem acesso ao sistema por trás do agente testado (ver limitação abaixo). O que a tag resolve é só o "cansaço" de amarrar cada massa a um telefone real toda vez: o mapeamento fica em `massas.json`, na raiz do projeto e fora do git (são telefones de clientes reais de um ambiente específico), no formato:
+A JudgeChat **não prepara o estado da massa** — isso continua manual, feito por quem tem acesso ao sistema por trás do agente testado (ver limitação abaixo). O que a tag resolve é só o "cansaço" de amarrar cada massa a um telefone real toda vez: o mapeamento fica em `massas.json`, na raiz do projeto e fora do git (são telefones de clientes reais de um ambiente específico), no formato:
 
 ```json
 {
@@ -99,7 +99,7 @@ O runner **só lê esse arquivo — nunca pergunta o telefone no terminal**. Se 
 
 #### Dado extra por massa (dia, modalidade, o que precisar)
 
-Além de `phone` e `description`, qualquer outro campo colocado direto na entrada da massa entra automaticamente como contexto na geração de personalidade/critério daquele cenário (via IA — `zapia-rascunhador-persona`/`zapia-rascunhador-criterio`, e os revisores) — não precisa mexer em código pra um campo novo valer, nem aninhar embaixo de uma chave especial:
+Além de `phone` e `description`, qualquer outro campo colocado direto na entrada da massa entra automaticamente como contexto na geração de personalidade/critério daquele cenário (via IA — `JudgeChat-rascunhador-persona`/`JudgeChat-rascunhador-criterio`, e os revisores) — não precisa mexer em código pra um campo novo valer, nem aninhar embaixo de uma chave especial:
 
 ```json
 {
@@ -120,7 +120,7 @@ O parser (`gherkinParser.js`) é deliberadamente simples: só `Feature`/`Funcion
 
 ### O que o critério do juiz pode (e não pode) verificar
 
-O juiz só enxerga o **transcript da conversa de WhatsApp** — nunca o banco de dados ou o back-office por trás do agente. Escreva os critérios em termos do que é observável no chat (o agente confirmou algo? mencionou algum erro?). Se um caso de teste depende de checar algo que só existe no banco/backend (não aparece na conversa), a Zapia não consegue validar isso sozinha — precisa de uma inspeção manual complementar.
+O juiz só enxerga o **transcript da conversa de WhatsApp** — nunca o banco de dados ou o back-office por trás do agente. Escreva os critérios em termos do que é observável no chat (o agente confirmou algo? mencionou algum erro?). Se um caso de teste depende de checar algo que só existe no banco/backend (não aparece na conversa), a JudgeChat não consegue validar isso sozinha — precisa de uma inspeção manual complementar.
 
 ### Fluxo do runner
 
