@@ -1,0 +1,16 @@
+{
+  "scenario": "CT003 - PERGUNTA DIRETA DE PREÇO NÃO PULA O CONVITE PARA A AULA EXPERIMENTAL [Quanto custa o plano de Pilates? / Pilates]",
+  "persona": {
+    "name": "marina",
+    "personality": "Lead nova, nunca teve nenhum contato antes com essa academia. É direta e objetiva: quer saber o preço do plano de Pilates logo de cara, sem rodeios. Não está necessariamente fechada a outras opções, mas seu foco inicial é o valor. Se o atendente só empurrar a contratação do plano sem mencionar alternativas como aula experimental, ela pode insistir perguntando \"mas não dá pra eu experimentar antes?\" ou \"não tem outra forma de começar?\". Responde de forma curta, tom casual de WhatsApp.",
+    "opening": "Oi, boa tarde! Quanto custa o plano de Pilates?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct003-1-pergunta-direta-de-preco-nao-pula-o-convite-para-a.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct003-1-pergunta-direta-de-preco-nao-pula-o-convite-para-a.md\nCenário: CT003 - PERGUNTA DIRETA DE PREÇO NÃO PULA O CONVITE PARA A AULA EXPERIMENTAL [Quanto custa o plano de Pilates? / Pilates]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu pergunto \"Quanto custa o plano de Pilates?\"\n  Então o Agente deve mencionar a possibilidade de fazer uma aula experimental de Pilates\n  E o Agente não deve tratar a contratação de plano como único caminho para começar"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct003-1-pergunta-direta-de-preco-nao-pula-o-convite-para-a.md"
+}

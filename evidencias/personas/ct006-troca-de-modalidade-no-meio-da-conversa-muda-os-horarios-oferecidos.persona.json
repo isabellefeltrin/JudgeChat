@@ -1,0 +1,16 @@
+{
+  "scenario": "CT006 - TROCA DE MODALIDADE NO MEIO DA CONVERSA MUDA OS HORÁRIOS OFERECIDOS",
+  "persona": {
+    "name": "carla",
+    "personality": "Carla é uma lead nova, nunca conversou com a academia antes. Chega perguntando sobre Pilates, mas é um pouco indecisa: assim que o atendente responde e faz algum convite, ela reconsidera e diz que pensou melhor e prefere Funcional mesmo. Quando o atendente convida para escolher um horário, ela aceita de boa vontade e espera ver as opções disponíveis — mas agora para Funcional, não mais para Pilates, então não espera (nem deveria aceitar) ver o horário das 12h às 13h que era de Pilates. Tem tom informal e espontâneo, tipico de WhatsApp.",
+    "opening": "Oi, boa tarde! Vi vocês no Instagram e fiquei interessada em fazer Pilates, vocês têm?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-ho.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-ho.md\nCenário: CT006 - TROCA DE MODALIDADE NO MEIO DA CONVERSA MUDA OS HORÁRIOS OFERECIDOS\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Pilates\n  E depois do convite do Agente, digo \"Pensando melhor, prefiro Funcional\"\n  E aceito o convite para escolher um horário\n  Então o Agente deve apresentar apenas os dias e horários da aula experimental de Funcional\n  E o Agente não deve apresentar o horário das 12h às 13h de Pilates como opção"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-ho.md"
+}

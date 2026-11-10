@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>marina :: transcript_log</title>
+<style>
+  :root {
+    --bg: #060812;
+    --surface: #0d1120;
+    --surface-alt: #10162b;
+    --line: #202a4a;
+    --cyan: #2fd8ff;
+    --magenta: #ff4fb0;
+    --amber: #ffcf5c;
+    --text: #e7ecf9;
+    --muted: #6b7699;
+    --mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, ui-monospace, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(47, 216, 255, 0.12), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  [tabindex]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  .header {
+    padding: 26px clamp(16px, 5vw, 48px) 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 8px;
+  }
+  .title {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(22px, 3.6vw, 32px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    text-shadow: 0 0 16px rgba(47, 216, 255, 0.6), 0 0 40px rgba(47, 216, 255, 0.25);
+    margin: 0 0 6px;
+    text-wrap: balance;
+    border-bottom: 2px solid var(--cyan);
+    box-shadow: 0 8px 12px -8px rgba(47, 216, 255, 0.7);
+    padding-bottom: 4px;
+  }
+  .brief {
+    font-size: 13.5px;
+    color: var(--muted);
+    max-width: 60ch;
+    line-height: 1.5;
+    margin: 8px 0 14px;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats strong { color: var(--text); font-weight: 600; }
+
+  .chat {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .row { display: flex; align-items: flex-end; gap: 8px; }
+  .row.cliente { justify-content: flex-end; }
+  .row.academia { justify-content: flex-start; }
+
+  .avatar {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--surface);
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  }
+  .avatar.cliente { color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.6), 0 0 10px rgba(47, 216, 255, 0.45); }
+  .avatar.academia { color: var(--magenta); box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.6), 0 0 10px rgba(255, 79, 176, 0.45); }
+
+  .bubble {
+    max-width: 82%;
+    min-width: 0;
+    padding: 9px 14px;
+    background: var(--surface);
+  }
+  .bubble.cliente {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.45), 0 0 16px rgba(47, 216, 255, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+  }
+  .bubble.academia {
+    background: var(--surface-alt);
+    box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.45), 0 0 16px rgba(255, 79, 176, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .meta { display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px; }
+  .meta .author {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .cliente .author { color: var(--cyan); }
+  .academia .author { color: var(--magenta); }
+  .meta .tag { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .empty {
+    text-align: center;
+    font-family: var(--mono);
+    color: var(--muted);
+    padding: 56px 16px;
+    border: 1px dashed var(--line);
+  }
+
+  .evaluation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    max-width: 60ch;
+    background: var(--surface);
+    border-left: 3px solid var(--muted);
+  }
+  .evaluation.good { border-left-color: #4ade80; }
+  .evaluation.bad { border-left-color: #f87171; }
+  .eval-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  .eval-score {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .good .eval-score { color: #4ade80; }
+  .bad .eval-score { color: #f87171; }
+  .unknown .eval-score { color: var(--muted); }
+  .eval-reason {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .gherkin { margin: 14px 0 0; max-width: 70ch; }
+  .gherkin-summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .gherkin-summary:hover { color: var(--cyan); }
+  .gherkin-text {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--cyan);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .batch { max-width: 1080px; margin: 0 auto; padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px; }
+  .batch table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .batch th, .batch td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .batch th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .batch td.reason { color: var(--text); max-width: 44ch; }
+  .batch td.numero { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .batch td a { color: var(--cyan); text-decoration: none; }
+  .batch td a:hover { text-decoration: underline; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .badge.good { color: #4ade80; box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.5); }
+  .badge.bad { color: #f87171; box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.5); }
+  .badge.unknown { color: var(--muted); box-shadow: inset 0 0 0 1px rgba(107, 118, 153, 0.5); }
+  .badge.erro { color: var(--amber); box-shadow: inset 0 0 0 1px rgba(255, 207, 92, 0.5); }
+  .badge.sm { font-size: 10px; padding: 2px 7px; }</style>
+</head>
+<body><div class="header"><p class="eyebrow">transcript_log // sessão encerrada</p><h1 class="title">marina</h1><p class="brief">Lead nova, nunca teve nenhum contato antes com essa academia. É direta e objetiva: quer saber o preço do plano de Pilates logo de cara, sem rodeios. Não está necessariamente fechada a outras opções, mas seu foco inicial é o valor. Se o atendente só empurrar a contratação do plano sem mencionar alternativas como aula experimental, ela pode insistir perguntando &quot;mas não dá pra eu experimentar antes?&quot; ou &quot;não tem outra forma de começar?&quot;. Responde de forma curta, tom casual de WhatsApp.</p><div class="stats"><span>msgs <strong>012</strong></span><span>número <strong>5548927480365</strong></span><span>gerado <strong>17/10/2026, 19:38:27</strong></span></div><details class="gherkin"><summary class="gherkin-summary">cenário testado (Gherkin)</summary><pre class="gherkin-text">@criterio:aula-experimental-ct003-1-pergunta-direta-de-preco-nao-pula-o-convite-para-a.md
+Cenário: CT003 - PERGUNTA DIRETA DE PREÇO NÃO PULA O CONVITE PARA A AULA EXPERIMENTAL [Quanto custa o plano de Pilates? / Pilates]
+  Dado que sou um lead novo, sem conversa anterior com a academia
+  Quando eu pergunto &quot;Quanto custa o plano de Pilates?&quot;
+  Então o Agente deve mencionar a possibilidade de fazer uma aula experimental de Pilates
+  E o Agente não deve tratar a contratação de plano como único caminho para começar</pre></details><div class="evaluation good"><p class="eval-eyebrow">avaliação automática</p><p class="eval-score">PASSOU</p><p class="eval-reason">O agente mencionou explicitamente a aula experimental de Pilates (#002, #004, #008) e confirmou que é possível começar por ela antes de contratar o plano, sem tratar a contratação como único caminho.</p></div></div><div class="chat"><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#001</span></div><div class="text">Oi, boa tarde! Quanto custa o plano de Pilates?</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#002</span></div><div class="text">Temos *Pilates*. Antes de falar dos planos, que tal fazer uma aula experimental para conhecer? Qual é seu primeiro nome?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#003</span></div><div class="text">Marina, mas antes me fala o valor do plano de Pilates? Quanto fica por mês?</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#004</span></div><div class="text">Marina, me passa seu sobrenome? Entendo que você queira ver o valor, mas antes preciso te convidar para a aula experimental. Você prefere fazer essa aula ou quer seguir direto para conhecer os planos?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#005</span></div><div class="text">Silva. Pode me passar o valor do plano de Pilates então? Quanto fica por mês?</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#006</span></div><div class="text">Marina Silva, o plano de *Pilates* fica em *R$ 1.200,00* por 12 meses. Não há taxa de adesão, e o acesso é livre durante a vigência, sem limite de entradas.<br><br>O valor mensal equivalente fica em R$ 100,00, mas a cobrança é do plano completo em uma única cobrança. Quer seguir com a matrícula?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#007</span></div><div class="text">Não tem outra forma de começar? Tipo uma aula experimental antes de pagar tudo de uma vez?</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#008</span></div><div class="text">Sim, dá para começar pela aula experimental antes de contratar o plano. Quer que eu veja os horários disponíveis de Pilates para você?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#009</span></div><div class="text">Sim, quero! Quais horários tem de Pilates?</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#010</span></div><div class="text">Para a aula experimental de *Pilates*, tenho estes horários:<br><br>*Domingo (18/10)*<br>1. 12h<br><br>*Segunda-feira (19/10)*<br>2. 12h<br><br>*Terça-feira (20/10)*<br>3. 12h<br><br>*Quarta-feira (21/10)*<br>4. 12h<br><br>*Quinta-feira (22/10)*<br>5. 12h<br><br>*Sexta-feira (23/10)*<br>6. 12h<br><br>*Sábado (24/10)*<br>7. 12h<br><br>Qual desses horários você prefere?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">marina</span><span class="tag">#011</span></div><div class="text">Quero o de segunda, às 12h</div></div><div class="avatar cliente">M</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#012</span></div><div class="text">Aula experimental de *Pilates* agendada para segunda-feira, 19/10, às 12h. Nos vemos lá, Marina!</div></div></div></div></body>
+</html>

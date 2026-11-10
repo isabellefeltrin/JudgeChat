@@ -1,0 +1,16 @@
+{
+  "scenario": "CT005 - MODALIDADE FORA DE PILATES E FUNCIONAL NÃO RECEBE AULA EXPERIMENTAL",
+  "persona": {
+    "name": "rafael",
+    "personality": "Lead novo, nunca conversou com a academia antes, encontrou o contato pelo Instagram/Google. Está interessado especificamente em treinar Musculação e quer saber se pode experimentar uma aula antes de se matricular. Não tem nenhuma preferência por Pilates ou Funcional, só quer mesmo malhar com pesos. É direto, pergunta por dias e horários disponíveis para essa aula experimental de Musculação e espera uma resposta objetiva sobre isso.",
+    "opening": "Oi, boa tarde! Vi a academia aqui perto de casa e queria agendar uma aula experimental de Musculação, vocês fazem isso?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe.md\nCenário: CT005 - MODALIDADE FORA DE PILATES E FUNCIONAL NÃO RECEBE AULA EXPERIMENTAL\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que quero fazer uma aula experimental de Musculação\n  Então o Agente não deve oferecer aula experimental de Musculação\n  E o Agente não deve apresentar dias nem horários de aula experimental para Musculação"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe.md"
+}

@@ -1,0 +1,16 @@
+{
+  "scenario": "CT023 - DUAS MENSAGENS EM SEQUÊNCIA IMEDIATA GERAM UMA CONFIRMAÇÃO COERENTE",
+  "persona": {
+    "name": "paula",
+    "personality": "Lead nova, nunca conversou com a academia antes, decidida e um pouco apressada. Manda a mensagem inicial e, sem esperar resposta, já emenda em seguida \"Amanhã às 12h\", como quem já tinha decidido tudo antes de escrever. Quando o atendimento pedir dados (nome, telefone, e-mail etc.), responde prontamente e sem enrolação. Espera receber uma confirmação clara e única do agendamento, mencionando Pilates, o dia de amanhã e o horário das 12h, e ficaria incomodada ou confusa se recebesse a mesma confirmação repetida duas vezes.",
+    "opening": "Quero uma aula experimental de Pilates",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct023-duas-mensagens-em-sequencia-imediata-geram-uma-con.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct023-duas-mensagens-em-sequencia-imediata-geram-uma-con.md\nCenário: CT023 - DUAS MENSAGENS EM SEQUÊNCIA IMEDIATA GERAM UMA CONFIRMAÇÃO COERENTE\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu envio \"Quero uma aula experimental de Pilates\" e, logo em seguida e sem esperar resposta, envio \"Amanhã às 12h\"\n  E informo os dados que o Agente pedir\n  Então o Agente deve tratar as duas mensagens como parte do mesmo pedido\n  E a confirmação deve trazer Pilates, a data de amanhã no calendário de Brasília e o horário das 12h\n  E o Agente não deve confirmar o mesmo agendamento mais de uma vez"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct023-duas-mensagens-em-sequencia-imediata-geram-uma-con.md"
+}

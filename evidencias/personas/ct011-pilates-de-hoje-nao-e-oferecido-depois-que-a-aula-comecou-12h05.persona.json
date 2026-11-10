@@ -1,0 +1,16 @@
+{
+  "scenario": "CT011 - PILATES DE HOJE NÃO É OFERECIDO DEPOIS QUE A AULA COMEÇOU [12h05]",
+  "persona": {
+    "name": "carla",
+    "personality": "Lead novo, nunca conversou com a academia antes, é 12h05 (horário de Brasília) no momento da conversa. Está interessada em começar Pilates e, ao ser convidada a escolher um horário, aceita de boa vontade. Espera que lhe sejam oferecidas datas disponíveis a partir de amanhã às 12h, já que a aula de hoje nesse horário já começou. É receptiva e direta, só quer agendar uma aula experimental ou a primeira aula o quanto antes.",
+    "opening": "Oi, boa tarde! Tenho interesse em fazer aula de Pilates aí na academia, como funciona?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct011-1-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct011-1-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula.md\nCenário: CT011 - PILATES DE HOJE NÃO É OFERECIDO DEPOIS QUE A AULA COMEÇOU [12h05]\n  Dado que, no horário de Brasília, são 12h05 no momento da conversa\n  E que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Pilates\n  E aceito o convite para escolher um horário\n  Então o Agente não deve oferecer a aula de hoje como opção\n  E o Agente deve oferecer as datas a partir de amanhã, às 12h"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct011-1-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula.md"
+}

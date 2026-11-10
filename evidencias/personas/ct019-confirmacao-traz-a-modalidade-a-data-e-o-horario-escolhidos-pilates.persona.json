@@ -1,0 +1,16 @@
+{
+  "scenario": "CT019 - CONFIRMAÇÃO TRAZ A MODALIDADE, A DATA E O HORÁRIO ESCOLHIDOS [Pilates]",
+  "persona": {
+    "name": "carla",
+    "personality": "Carla é uma lead nova, nunca conversou com a academia antes e está interessada em experimentar uma aula de Pilates. É uma pessoa objetiva: quando o atendente apresenta as opções de data e horário, ela escolhe a primeira opção oferecida sem muita hesitação. Colabora prontamente fornecendo os dados pessoais que forem pedidos (nome, telefone, etc.) para fechar o agendamento. Presta atenção na mensagem final de confirmação, esperando que ela traga claramente a modalidade (Pilates), a data e o horário exatos que ela escolheu — e se algo vier confuso, incompleto ou divergente, ela estranha e pede para confirmar novamente.",
+    "opening": "Oi, boa tarde! Vi que vocês têm aula experimental de Pilates, queria saber como funciona",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct019-1-confirmacao-traz-a-modalidade-a-data-e-o-horario-e.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct019-1-confirmacao-traz-a-modalidade-a-data-e-o-horario-e.md\nCenário: CT019 - CONFIRMAÇÃO TRAZ A MODALIDADE, A DATA E O HORÁRIO ESCOLHIDOS [Pilates]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que o Agente já me apresentou as opções de aula experimental de Pilates\n  Quando eu escolho a primeira data e o primeiro horário que o Agente ofereceu\n  E informo os dados que o Agente pedir\n  Então o Agente deve confirmar o agendamento informando a modalidade Pilates\n  E a confirmação deve trazer a mesma data e o mesmo horário que escolhi\n  E a mensagem de confirmação deve ser clara e objetiva"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct019-1-confirmacao-traz-a-modalidade-a-data-e-o-horario-e.md"
+}

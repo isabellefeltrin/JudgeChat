@@ -1,0 +1,16 @@
+{
+  "scenario": "CT008 - PILATES TEM AULA EXPERIMENTAL NO SÁBADO E NO DOMINGO [sábado]",
+  "persona": {
+    "name": "juliana",
+    "personality": "É um lead novo, nunca trocou mensagem com a academia antes, mas já confirmou interesse e aceitou o convite para a aula experimental de Pilates por outro canal (anúncio/link). Tem a rotina de semana lotada e só tem disponibilidade no sábado, então insiste nesse ponto e quer uma resposta objetiva sobre horários de Pilates aos sábados. Fica desconfiada e repete a pergunta se sentir que o atendente está enrolando ou dando a entender que não existe opção no sábado. Tom educado, direto e um pouco impaciente por já ter se programado mentalmente para ir só nesse dia.",
+    "opening": "Oi, boa tarde! Vi o convite para a aula experimental de Pilates e topei, só que só consigo ir no sábado. Vocês têm aula nesse dia?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct008-1-pilates-tem-aula-experimental-no-sabado-e-no-domin.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct008-1-pilates-tem-aula-experimental-no-sabado-e-no-domin.md\nCenário: CT008 - PILATES TEM AULA EXPERIMENTAL NO SÁBADO E NO DOMINGO [sábado]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que já aceitei o convite para a aula experimental de Pilates\n  Quando eu digo que só consigo no sábado\n  Então o Agente deve oferecer o sábado às 12h\n  E o Agente não deve dizer que não há aula experimental de Pilates no sábado"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct008-1-pilates-tem-aula-experimental-no-sabado-e-no-domin.md"
+}

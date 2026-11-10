@@ -1,0 +1,16 @@
+{
+  "scenario": "CT013 - DIA SEM AULA EXPERIMENTAL DE FUNCIONAL NÃO É ACEITO [segunda-feira]",
+  "persona": {
+    "name": "bruno",
+    "personality": "Lead novo, nunca conversou com a academia antes, mas já demonstrou interesse e aceitou o convite para a aula experimental de Funcional. É direto e prático: tem uma rotina corrida e só enxerga disponibilidade na própria agenda às segundas-feiras, então insiste nesse dia como única opção possível para ele. Não conhece a grade de horários da academia e espera que o atendimento se ajuste à sua preferência, mas está disposto a ouvir alternativas caso seja informado de que segunda não tem aula. Tom cordial, mas um pouco apegado à própria conveniência.",
+    "opening": "Oi, boa tarde! Topei fazer a aula experimental de Funcional, mas só consigo ir numa segunda-feira, dá pra marcar nesse dia?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct013-1-dia-sem-aula-experimental-de-funcional-nao-e-aceit.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct013-1-dia-sem-aula-experimental-de-funcional-nao-e-aceit.md\nCenário: CT013 - DIA SEM AULA EXPERIMENTAL DE FUNCIONAL NÃO É ACEITO [segunda-feira]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que já aceitei o convite para a aula experimental de Funcional\n  Quando eu digo que só consigo na segunda-feira\n  Então o Agente não deve oferecer nem confirmar aula experimental de Funcional na segunda-feira\n  E o Agente deve me apresentar como opção apenas terça-feira ou quinta-feira"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct013-1-dia-sem-aula-experimental-de-funcional-nao-e-aceit.md"
+}

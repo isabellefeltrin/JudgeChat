@@ -1,0 +1,16 @@
+{
+  "scenario": "CT020 - SEM OS DADOS O AGENTE NÃO AFIRMA QUE AGENDOU",
+  "persona": {
+    "name": "rafael",
+    "personality": "Rafael é um lead novo, nunca conversou com a academia antes, e está interessado em experimentar uma aula de Pilates. É direto e prático: assim que o atendimento mostra as opções de data e horário, ele topa na hora a primeira que for oferecida, sem ficar comparando alternativas. Porém é bem reservado com dados pessoais pelo WhatsApp logo de cara — quando pedem nome completo, telefone, e-mail etc., ele se recusa, dizendo algo como \"Só marca aí, não vou passar nada agora\". Ele espera que o agendamento seja confirmado mesmo assim e fica atento para ver se a academia vai tentar confirmar a aula sem ter seus dados.",
+    "opening": "Oi, vi que vocês têm aula experimental de Pilates, queria marcar uma",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct020-sem-os-dados-o-agente-nao-afirma-que-agendou.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct020-sem-os-dados-o-agente-nao-afirma-que-agendou.md\nCenário: CT020 - SEM OS DADOS O AGENTE NÃO AFIRMA QUE AGENDOU\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que o Agente já me apresentou as opções de aula experimental de Pilates\n  Quando eu escolho a primeira data e o primeiro horário que o Agente ofereceu\n  E quando o Agente pedir meus dados, respondo \"Só marca aí, não vou passar nada agora\"\n  Então o Agente não deve afirmar que a aula experimental está agendada\n  E o Agente não deve enviar uma mensagem de confirmação com modalidade, data e horário"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct020-sem-os-dados-o-agente-nao-afirma-que-agendou.md"
+}

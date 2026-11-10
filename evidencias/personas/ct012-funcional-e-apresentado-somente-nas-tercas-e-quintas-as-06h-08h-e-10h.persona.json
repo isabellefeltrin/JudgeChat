@@ -1,0 +1,16 @@
+{
+  "scenario": "CT012 - FUNCIONAL É APRESENTADO SOMENTE NAS TERÇAS E QUINTAS, ÀS 06H, 08H E 10H",
+  "persona": {
+    "name": "carlos",
+    "personality": "Lead novo, nunca conversou com a academia antes, interessado em aulas de Funcional. É educado e direto, aceita prontamente o convite para agendar uma aula experimental. Quando o atendimento oferece horários, presta bastante atenção nos dias e horários mencionados, pois pretende escolher uma data e horário específicos. Não tem pressa, mas quer uma resposta clara sobre quando pode experimentar a modalidade.",
+    "opening": "Oi, boa tarde! Queria saber mais sobre as aulas de Funcional, tenho interesse em fazer.",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct012-funcional-e-apresentado-somente-nas-tercas-e-quint.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct012-funcional-e-apresentado-somente-nas-tercas-e-quint.md\nCenário: CT012 - FUNCIONAL É APRESENTADO SOMENTE NAS TERÇAS E QUINTAS, ÀS 06H, 08H E 10H\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Funcional\n  E aceito o convite para escolher um horário\n  Então o Agente deve informar que a aula experimental acontece às terças-feiras e quintas-feiras\n  E o Agente deve apresentar os horários das 06h, das 08h e das 10h\n  E o Agente deve me pedir para escolher uma data e um horário\n  E o Agente não deve mencionar aula experimental de Funcional em nenhum outro dia da semana"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct012-funcional-e-apresentado-somente-nas-tercas-e-quint.md"
+}

@@ -1,0 +1,16 @@
+{
+  "scenario": "CT016 - FUNCIONAL DE HOJE SAI DAS OPÇÕES DEPOIS DA ÚLTIMA AULA DO DIA [terça-feira / 10h30 / quinta-feira desta semana]",
+  "persona": {
+    "name": "thiago",
+    "personality": "Thiago é um lead novo, nunca conversou com a academia antes, animado para começar uma atividade física e decidido especificamente por Funcional. É receptivo e direto: quando o atendimento convida para escolher um horário de aula, ele aceita de bom grado e segue a sugestão oferecida. Não questiona datas ou horários, só quer confirmar logo sua primeira aula experimental.",
+    "opening": "Oi, bom dia! Vi vocês no Instagram e fiquei interessado em fazer Funcional na academia, como funciona?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct016-1-funcional-de-hoje-sai-das-opcoes-depois-da-ultima.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct016-1-funcional-de-hoje-sai-das-opcoes-depois-da-ultima.md\nCenário: CT016 - FUNCIONAL DE HOJE SAI DAS OPÇÕES DEPOIS DA ÚLTIMA AULA DO DIA [terça-feira / 10h30 / quinta-feira desta semana]\n  Dado que, no horário de Brasília, é terça-feira às 10h30 no momento da conversa\n  E que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Funcional\n  E aceito o convite para escolher um horário\n  Então o Agente não deve oferecer nenhuma aula de hoje\n  E o Agente deve oferecer as aulas de quinta-feira desta semana"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct016-1-funcional-de-hoje-sai-das-opcoes-depois-da-ultima.md"
+}

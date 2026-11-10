@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>aula-experimental :: bateria</title>
+<style>
+  :root {
+    --bg: #060812;
+    --surface: #0d1120;
+    --surface-alt: #10162b;
+    --line: #202a4a;
+    --cyan: #2fd8ff;
+    --magenta: #ff4fb0;
+    --amber: #ffcf5c;
+    --text: #e7ecf9;
+    --muted: #6b7699;
+    --mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, ui-monospace, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(47, 216, 255, 0.12), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  [tabindex]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  .header {
+    padding: 26px clamp(16px, 5vw, 48px) 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 8px;
+  }
+  .title {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(22px, 3.6vw, 32px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    text-shadow: 0 0 16px rgba(47, 216, 255, 0.6), 0 0 40px rgba(47, 216, 255, 0.25);
+    margin: 0 0 6px;
+    text-wrap: balance;
+    border-bottom: 2px solid var(--cyan);
+    box-shadow: 0 8px 12px -8px rgba(47, 216, 255, 0.7);
+    padding-bottom: 4px;
+  }
+  .brief {
+    font-size: 13.5px;
+    color: var(--muted);
+    max-width: 60ch;
+    line-height: 1.5;
+    margin: 8px 0 14px;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats strong { color: var(--text); font-weight: 600; }
+
+  .chat {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .row { display: flex; align-items: flex-end; gap: 8px; }
+  .row.cliente { justify-content: flex-end; }
+  .row.academia { justify-content: flex-start; }
+
+  .avatar {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--surface);
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  }
+  .avatar.cliente { color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.6), 0 0 10px rgba(47, 216, 255, 0.45); }
+  .avatar.academia { color: var(--magenta); box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.6), 0 0 10px rgba(255, 79, 176, 0.45); }
+
+  .bubble {
+    max-width: 82%;
+    min-width: 0;
+    padding: 9px 14px;
+    background: var(--surface);
+  }
+  .bubble.cliente {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.45), 0 0 16px rgba(47, 216, 255, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+  }
+  .bubble.academia {
+    background: var(--surface-alt);
+    box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.45), 0 0 16px rgba(255, 79, 176, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .meta { display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px; }
+  .meta .author {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .cliente .author { color: var(--cyan); }
+  .academia .author { color: var(--magenta); }
+  .meta .tag { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .empty {
+    text-align: center;
+    font-family: var(--mono);
+    color: var(--muted);
+    padding: 56px 16px;
+    border: 1px dashed var(--line);
+  }
+
+  .evaluation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    max-width: 60ch;
+    background: var(--surface);
+    border-left: 3px solid var(--muted);
+  }
+  .evaluation.good { border-left-color: #4ade80; }
+  .evaluation.bad { border-left-color: #f87171; }
+  .eval-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  .eval-score {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .good .eval-score { color: #4ade80; }
+  .bad .eval-score { color: #f87171; }
+  .unknown .eval-score { color: var(--muted); }
+  .eval-reason {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .gherkin { margin: 14px 0 0; max-width: 70ch; }
+  .gherkin-summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .gherkin-summary:hover { color: var(--cyan); }
+  .gherkin-text {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--cyan);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .batch { max-width: 1080px; margin: 0 auto; padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px; }
+  .batch table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .batch th, .batch td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .batch th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .batch td.reason { color: var(--text); max-width: 44ch; }
+  .batch td.numero { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .batch td a { color: var(--cyan); text-decoration: none; }
+  .batch td a:hover { text-decoration: underline; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .badge.good { color: #4ade80; box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.5); }
+  .badge.bad { color: #f87171; box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.5); }
+  .badge.unknown { color: var(--muted); box-shadow: inset 0 0 0 1px rgba(107, 118, 153, 0.5); }
+  .badge.erro { color: var(--amber); box-shadow: inset 0 0 0 1px rgba(255, 207, 92, 0.5); }
+  .badge.sm { font-size: 10px; padding: 2px 7px; }
+  .run-strip-wrap { max-width: 1080px; margin: 0 auto; padding: 4px clamp(16px, 4vw, 40px) 0; }
+  .strip-row { display: flex; align-items: center; gap: 10px; }
+  .run-strip { flex: 1; display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 10px; }
+  .strip-chip {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 12px;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .strip-chip .strip-date { font-family: var(--mono); font-size: 10.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .strip-chip .strip-counts { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+  .strip-chip.is-current { border-color: var(--amber); background: rgba(255, 207, 92, 0.08); cursor: default; }
+  .history-link { font-family: var(--mono); font-size: 11px; color: var(--cyan); text-decoration: none; white-space: nowrap; margin-left: auto; padding-left: 12px; }
+  .history-link:hover { text-decoration: underline; }
+
+  .scenario-card { border-bottom: 1px solid var(--line); }
+  .scenario-card:last-child { border-bottom: none; }
+  .scenario-card summary {
+    cursor: pointer;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: start;
+    gap: 14px;
+    padding: 12px 4px;
+  }
+  .scenario-card summary::-webkit-details-marker { display: none; }
+  .scenario-card summary::before {
+    content: "▸";
+    font-family: var(--mono);
+    color: var(--muted);
+    margin-right: 8px;
+    display: inline-block;
+  }
+  .scenario-card[open] summary::before { transform: rotate(90deg); color: var(--magenta); }
+  .scen-main { min-width: 0; }
+  .scen-name { font-size: 13.5px; color: var(--text); font-weight: 600; }
+  .scen-reason { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; max-width: 62ch; }
+  .scen-numero { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .scen-link { font-family: var(--mono); font-size: 12px; color: var(--cyan); text-decoration: none; white-space: nowrap; align-self: center; }
+  .scen-link:hover { text-decoration: underline; }
+  .timeline { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 4px 16px 26px; }
+  .tl-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 6px 10px;
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    min-width: 78px;
+    text-decoration: none;
+  }
+  .tl-chip.is-latest { border-color: var(--magenta); }
+  .tl-date { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .run-list { display: flex; flex-direction: column; }
+  .run-card {
+    display: grid;
+    grid-template-columns: 20px 150px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 13px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .run-card:last-child { border-bottom: none; }
+  .run-card input[type="checkbox"] { accent-color: var(--cyan); width: 15px; height: 15px; }
+  .run-when { display: flex; flex-direction: column; gap: 1px; }
+  .run-date { font-family: var(--mono); font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .run-time { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .run-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .run-link { font-family: var(--mono); font-size: 12px; color: var(--cyan); text-decoration: none; white-space: nowrap; }
+  .run-link:hover { text-decoration: underline; }
+  .compare-bar { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .compare-bar span { font-size: 12px; color: var(--muted); }
+  .compare-btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--bg);
+    background: var(--cyan);
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .compare-btn:disabled { background: var(--surface-alt); color: var(--muted); cursor: not-allowed; }
+  .compare-table-wrap { margin-top: 24px; }
+  .compare-caption { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }
+  .compare-table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare-table-wrap th, .compare-table-wrap td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  .compare-table-wrap th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .compare-table-wrap td a { color: var(--cyan); text-decoration: none; font-family: var(--mono); font-size: 12px; }
+  .compare-table-wrap tr.diff-row td:first-child { border-left: 3px solid var(--amber); padding-left: 9px; }</style>
+</head>
+<body><div class="header"><p class="eyebrow">bateria de testes // relatório consolidado</p><h1 class="title">aula-experimental</h1><div class="stats"><span>gerado <strong>17/10/2026, 19:44:39</strong></span><span>duração <strong>7min 15s</strong></span><span>instâncias simultâneas <strong>4</strong></span><span>passou <strong>15</strong></span><span>falhou <strong>9</strong></span><span>erro técnico <strong>0</strong></span></div></div><div class="run-strip-wrap"><div class="strip-row"><div class="run-strip"><a class="strip-chip" href="./bateria-aula-experimental-2026-10-13T22-58-22-875Z.html"><span class="strip-date">13/10/2026</span><span class="strip-counts">6✓ 18✗</span></a><a class="strip-chip" href="./bateria-aula-experimental-2026-10-17T21-12-10-136Z.html"><span class="strip-date">17/10/2026</span><span class="strip-counts">15✓ 9✗</span></a><span class="strip-chip is-current" aria-current="page"><span class="strip-date">17/10/2026 · atual</span><span class="strip-counts">15✓ 9✗</span></span></div><a class="history-link" href="./historico-aula-experimental.html">ver histórico completo (3 execuções) →</a></div></div><div class="batch"><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT001 - LEAD INTERESSADO EM PILATES RECEBE CONVITE PARA AULA EXPERIMENTAL</div><div class="scen-reason">O convite para a experimental de Pilates veio em #002 antes de qualquer oferta de plano, o horário foi perguntado e oferecido em #004/#006, e nenhuma outra modalidade foi mencionada.</div><div class="scen-numero">número/instância: 5548902326283</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct001-lead-interessado-em-pilates-recebe-convite-para-aula-experimental-2026-10-17T22-38-09-961Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct001-lead-interessado-em-pilates-recebe-convite-para-aula-experimental-2026-10-13T22-39-35-070Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct001-lead-interessado-em-pilates-recebe-convite-para-aula-experimental-2026-10-17T21-03-15-374Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT002 - LEAD INTERESSADO EM FUNCIONAL RECEBE CONVITE PARA AULA EXPERIMENTAL</div><div class="scen-reason">O convite para a experimental de Funcional veio em #004 antes de qualquer menção a contratação de plano, o agente perguntou sobre dia e horário em #006 e #012, e nenhuma outra modalidade foi apresentada.</div><div class="scen-numero">número/instância: 5548905709767</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct002-lead-interessado-em-funcional-recebe-convite-para-aula-experimental-2026-10-17T22-38-32-989Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct002-lead-interessado-em-funcional-recebe-convite-para-aula-experimental-2026-10-13T22-39-38-605Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct002-lead-interessado-em-funcional-recebe-convite-para-aula-experimental-2026-10-17T21-03-19-837Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT003 - PERGUNTA DIRETA DE PREÇO NÃO PULA O CONVITE PARA A AULA EXPERIMENTAL [Quanto custa o plano de Pilates? / Pilates]</div><div class="scen-reason">O agente mencionou explicitamente a aula experimental de Pilates (#002, #004, #008) e confirmou que é possível começar por ela antes de contratar o plano, sem tratar a contratação como único caminho.</div><div class="scen-numero">número/instância: 5548927480365</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct003-pergunta-direta-de-preco-nao-pula-o-convite-para-a-aula-experimental-quanto-custa-o-plano-de-pilates-pilates-2026-10-17T22-38-23-012Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct003-pergunta-direta-de-preco-nao-pula-o-convite-para-a-aula-experimental-quanto-custa-o-plano-de-pilates-pilates-2026-10-13T22-40-56-337Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct003-pergunta-direta-de-preco-nao-pula-o-convite-para-a-aula-experimental-quanto-custa-o-plano-de-pilates-pilates-2026-10-17T21-03-57-460Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT004 - MODALIDADE NÃO IDENTIFICADA É PERGUNTADA ANTES DE SEGUIR</div><div class="scen-reason">O Agente perguntou qual modalidade o cliente queria em #002, antes de informar qualquer dia ou horário concreto, e só apresentou horários de Funcional depois da resposta do cliente em #003.</div><div class="scen-numero">número/instância: 5548961292993</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct004-modalidade-nao-identificada-e-perguntada-antes-de-seguir-2026-10-17T22-38-17-779Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct004-modalidade-nao-identificada-e-perguntada-antes-de-seguir-2026-10-13T22-41-03-525Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct004-modalidade-nao-identificada-e-perguntada-antes-de-seguir-2026-10-17T21-05-00-797Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT005 - MODALIDADE FORA DE PILATES E FUNCIONAL NÃO RECEBE AULA EXPERIMENTAL</div><div class="scen-reason">O Agente não ofereceu nem agendou aula experimental de Musculação, e apenas redirecionou para Pilates e Funcional.</div><div class="scen-numero">número/instância: 5548996809160</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe-aula-experimental-2026-10-17T22-39-10-675Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe-aula-experimental-2026-10-13T22-42-18-329Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct005-modalidade-fora-de-pilates-e-funcional-nao-recebe-aula-experimental-2026-10-17T21-04-30-369Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT006 - TROCA DE MODALIDADE NO MEIO DA CONVERSA MUDA OS HORÁRIOS OFERECIDOS</div><div class="scen-reason">Após a troca de modalidade, o agente apresentou exclusivamente horários de Funcional e não ofereceu nem misturou nenhum horário de Pilates.</div><div class="scen-numero">número/instância: 5548953204286</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-horarios-oferecidos-2026-10-17T22-39-19-233Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-horarios-oferecidos-2026-10-13T22-41-55-290Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct006-troca-de-modalidade-no-meio-da-conversa-muda-os-horarios-oferecidos-2026-10-17T21-04-48-865Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT007 - HORÁRIO DE PILATES APRESENTADO É SOMENTE DAS 12H ÀS 13H</div><div class="scen-reason">O Agente apresentou somente o horário das 12h (60 minutos, ou seja, 12h às 13h), pediu o dia à cliente em #004 e não sugeriu nenhum outro horário de Pilates.</div><div class="scen-numero">número/instância: 5548978922272</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct007-horario-de-pilates-apresentado-e-somente-das-12h-as-13h-2026-10-17T22-39-17-318Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct007-horario-de-pilates-apresentado-e-somente-das-12h-as-13h-2026-10-13T22-42-53-961Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct007-horario-de-pilates-apresentado-e-somente-das-12h-as-13h-2026-10-17T21-05-43-793Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT008 - PILATES TEM AULA EXPERIMENTAL NO SÁBADO E NO DOMINGO [sábado]</div><div class="scen-reason">O Agente ofereceu explicitamente o sábado (24/10) às 12h para Pilates (#004) e nunca negou a disponibilidade de aulas experimentais aos sábados.</div><div class="scen-numero">número/instância: 5548944905376</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct008-pilates-tem-aula-experimental-no-sabado-e-no-domingo-sabado-2026-10-17T22-39-19-130Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct008-pilates-tem-aula-experimental-no-sabado-e-no-domingo-sabado-2026-10-13T22-43-05-411Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct008-pilates-tem-aula-experimental-no-sabado-e-no-domingo-sabado-2026-10-17T21-05-50-785Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT009 - HORÁRIO DE PILATES FORA DA GRADE NÃO É ACEITO [08h]</div><div class="scen-reason">O atendente deixou o horário das 08h em aberto ao encaminhar o pedido para a equipe verificar a possibilidade (#008, #010), sem recusa clara, e não reafirmou o horário das 12h às 13h como a opção válida.</div><div class="scen-numero">número/instância: 5548962093043</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct009-horario-de-pilates-fora-da-grade-nao-e-aceito-08h-2026-10-17T22-40-12-657Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct009-horario-de-pilates-fora-da-grade-nao-e-aceito-08h-2026-10-13T22-44-11-216Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct009-horario-de-pilates-fora-da-grade-nao-e-aceito-08h-2026-10-17T21-06-08-973Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT010 - PILATES DE HOJE É OFERECIDO ENQUANTO A AULA NÃO COMEÇOU [08h30]</div><div class="scen-reason">O Agente nunca ofereceu a aula de hoje às 12h entre as opções. Só apresentou o horário genérico (#004) e depois a aula de amanhã (#006), então o lead não recebeu a opção de hoje como escolha concreta.</div><div class="scen-numero">número/instância: 5548925245018</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct010-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-comecou-08h30-2026-10-17T22-40-09-758Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct010-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-comecou-08h30-2026-10-13T22-43-58-020Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct010-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-comecou-08h30-2026-10-17T21-06-55-773Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT011 - PILATES DE HOJE NÃO É OFERECIDO DEPOIS QUE A AULA COMEÇOU [12h05]</div><div class="scen-reason">O Agente não ofereceu nem confirmou a aula de hoje, e a primeira e única opção apresentada foi amanhã (18/10) às 12h, que foi confirmada.</div><div class="scen-numero">número/instância: 5548934314305</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct011-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula-comecou-12h05-2026-10-17T22-40-04-309Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct011-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula-comecou-12h05-2026-10-13T22-44-55-133Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct011-pilates-de-hoje-nao-e-oferecido-depois-que-a-aula-comecou-12h05-2026-10-17T21-06-52-378Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT012 - FUNCIONAL É APRESENTADO SOMENTE NAS TERÇAS E QUINTAS, ÀS 06H, 08H E 10H</div><div class="scen-reason">O Agente listou os três horários e pediu a escolha (#010), mas nunca informou explicitamente que Funcional acontece às terças e quintas, que é uma condição obrigatória do critério.</div><div class="scen-numero">número/instância: 5548988231010</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct012-funcional-e-apresentado-somente-nas-tercas-e-quintas-as-06h-08h-e-10h-2026-10-17T22-40-54-091Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct012-funcional-e-apresentado-somente-nas-tercas-e-quintas-as-06h-08h-e-10h-2026-10-13T22-45-09-499Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct012-funcional-e-apresentado-somente-nas-tercas-e-quintas-as-06h-08h-e-10h-2026-10-17T21-06-58-535Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT013 - DIA SEM AULA EXPERIMENTAL DE FUNCIONAL NÃO É ACEITO [segunda-feira]</div><div class="scen-reason">O Agente recusou a segunda-feira em #004, #006 e #008, ofereceu apenas terça e quinta em #008 e agendou na terça, sem oferecer nenhum outro dia.</div><div class="scen-numero">número/instância: 5548977929822</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct013-dia-sem-aula-experimental-de-funcional-nao-e-aceito-segunda-feira-2026-10-17T22-41-52-402Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct013-dia-sem-aula-experimental-de-funcional-nao-e-aceito-segunda-feira-2026-10-13T22-45-59-022Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct013-dia-sem-aula-experimental-de-funcional-nao-e-aceito-segunda-feira-2026-10-17T21-07-46-563Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT014 - HORÁRIO DE FUNCIONAL FORA DA GRADE NÃO É ACEITO [12h]</div><div class="scen-reason">O Agente rejeitou explicitamente o horário das 12h em #004, ofereceu apenas 6h, 8h e 10h e confirmou 6h em #006 e #008. A frase ambígua de #002 (&quot;Consigo verificar... às 12h&quot;) foi corrigida logo em seguida e não chegou a ser um aceite.</div><div class="scen-numero">número/instância: 5548935716857</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct014-horario-de-funcional-fora-da-grade-nao-e-aceito-12h-2026-10-17T22-41-42-518Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct014-horario-de-funcional-fora-da-grade-nao-e-aceito-12h-2026-10-13T22-46-20-260Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct014-horario-de-funcional-fora-da-grade-nao-e-aceito-12h-2026-10-17T21-07-43-570Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT015 - FUNCIONAL DE HOJE OFERECE SÓ OS HORÁRIOS QUE AINDA NÃO COMEÇARAM</div><div class="scen-reason">O Agente não ofereceu nenhum horário de hoje (#006), omitindo 08h e 10h, que o critério exige que sejam apresentados.</div><div class="scen-numero">número/instância: 5548925411042</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda-nao-comecaram-2026-10-17T22-41-58-257Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda-nao-comecaram-2026-10-13T22-47-48-119Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda-nao-comecaram-2026-10-17T21-08-34-583Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT016 - FUNCIONAL DE HOJE SAI DAS OPÇÕES DEPOIS DA ÚLTIMA AULA DO DIA [terça-feira / 10h30 / quinta-feira desta semana]</div><div class="scen-reason">O Agente ofereceu horários de terça-feira (#006) e confirmou a aula de terça às 08:00 (#008), sendo terça o dia atual no cenário e com todos esses horários já encerrados às 10h30.</div><div class="scen-numero">número/instância: 5548987257117</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct016-funcional-de-hoje-sai-das-opcoes-depois-da-ultima-aula-do-dia-terca-feira-10h30-quinta-feira-desta-semana-2026-10-17T22-41-50-860Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct016-funcional-de-hoje-sai-das-opcoes-depois-da-ultima-aula-do-dia-terca-feira-10h30-quinta-feira-desta-semana-2026-10-13T22-47-18-050Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct016-funcional-de-hoje-sai-das-opcoes-depois-da-ultima-aula-do-dia-terca-feira-10h30-quinta-feira-desta-semana-2026-10-17T21-09-33-386Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT017 - EM DIA SEM FUNCIONAL EXPERIMENTAL A PRÓXIMA OPÇÃO É O PRÓXIMO DIA DE AULA [segunda-feira / terça-feira]</div><div class="scen-reason">O agente não ofereceu aula de hoje, mas também não apresentou horários de terça-feira como a próxima opção. Disse que não havia horários na terça (#006) e depois ofereceu quinta (#010), então a segunda condição do critério não foi cumprida.</div><div class="scen-numero">número/instância: 5548918275214</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct017-em-dia-sem-funcional-experimental-a-proxima-opcao-e-o-proximo-dia-de-aula-segunda-feira-terca-feira-2026-10-17T22-43-00-486Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct017-em-dia-sem-funcional-experimental-a-proxima-opcao-e-o-proximo-dia-de-aula-segunda-feira-terca-feira-2026-10-13T22-48-45-645Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct017-em-dia-sem-funcional-experimental-a-proxima-opcao-e-o-proximo-dia-de-aula-segunda-feira-terca-feira-2026-10-17T21-09-15-708Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT018 - APÓS ESCOLHER DATA E HORÁRIO O AGENTE PEDE OS DADOS EM VEZ DE CONFIRMAR [Pilates]</div><div class="scen-reason">O Agente não repetiu modalidade, data e horário escolhidos ao pedir os dados. Em #002 e #004 pediu o nome sem reformular a escolha e voltou a perguntar a data. O resumo só apareceu em #006, depois da coleta.</div><div class="scen-numero">número/instância: 5548912391439</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct018-apos-escolher-data-e-horario-o-agente-pede-os-dados-em-vez-de-confirmar-pilates-2026-10-17T22-42-51-105Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct018-apos-escolher-data-e-horario-o-agente-pede-os-dados-em-vez-de-confirmar-pilates-2026-10-13T22-48-29-791Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct018-apos-escolher-data-e-horario-o-agente-pede-os-dados-em-vez-de-confirmar-pilates-2026-10-17T21-09-49-235Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT019 - CONFIRMAÇÃO TRAZ A MODALIDADE, A DATA E O HORÁRIO ESCOLHIDOS [Pilates]</div><div class="scen-reason">A confirmação em #006 cita Pilates, a data 18/10 e o horário 12h combinados em #004–#005, de forma clara, objetiva e afirmativa (&quot;Agendado&quot;).</div><div class="scen-numero">número/instância: 5548999480752</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct019-confirmacao-traz-a-modalidade-a-data-e-o-horario-escolhidos-pilates-2026-10-17T22-42-45-129Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct019-confirmacao-traz-a-modalidade-a-data-e-o-horario-escolhidos-pilates-2026-10-13T22-49-54-530Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct019-confirmacao-traz-a-modalidade-a-data-e-o-horario-escolhidos-pilates-2026-10-17T21-10-40-861Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT020 - SEM OS DADOS O AGENTE NÃO AFIRMA QUE AGENDOU</div><div class="scen-reason">O critério pressupõe uma recusa de dados que não ocorre aqui, e o agente trata o agendamento como concluído em #008 e #010, com modalidade, data e horário em tom de confirmação, sem sinalizar que falta algum dado.</div><div class="scen-numero">número/instância: 5548955307163</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct020-sem-os-dados-o-agente-nao-afirma-que-agendou-2026-10-17T22-42-51-419Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct020-sem-os-dados-o-agente-nao-afirma-que-agendou-2026-10-13T22-49-59-625Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct020-sem-os-dados-o-agente-nao-afirma-que-agendou-2026-10-17T21-10-31-392Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT021 - TROCA DE HORÁRIO ANTES DOS DADOS VALE NA CONFIRMAÇÃO</div><div class="scen-reason">A confirmação final (#018) informa apenas o horário das 10h como agendado, refletindo corretamente a troca pedida, sem citar 08h como horário confirmado.</div><div class="scen-numero">número/instância: 5548957115830</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct021-troca-de-horario-antes-dos-dados-vale-na-confirmacao-2026-10-17T22-44-34-953Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct021-troca-de-horario-antes-dos-dados-vale-na-confirmacao-2026-10-13T22-50-58-490Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct021-troca-de-horario-antes-dos-dados-vale-na-confirmacao-2026-10-17T21-11-09-941Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm good">PASSOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT022 - ESCOLHA COMPLETA NUMA ÚNICA MENSAGEM NÃO REPETE PERGUNTAS</div><div class="scen-reason">Em #004 o Agente pediu que a cliente confirmasse o horário que ela já havia informado em #001, e pelo critério isso conta como repetição de pergunta, embora a confirmação final em #006 cite corretamente 18/10 às 12h.</div><div class="scen-numero">número/instância: 5548977295673</div></div><span class="badge bad">FALHOU</span><span class="scen-link"><a href="./ct022-escolha-completa-numa-unica-mensagem-nao-repete-perguntas-2026-10-17T22-43-46-907Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct022-escolha-completa-numa-unica-mensagem-nao-repete-perguntas-2026-10-13T22-51-09-057Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm good">PASSOU</span></a><a class="tl-chip" href="./ct022-escolha-completa-numa-unica-mensagem-nao-repete-perguntas-2026-10-17T21-11-49-717Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm bad">FALHOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT023 - DUAS MENSAGENS EM SEQUÊNCIA IMEDIATA GERAM UMA CONFIRMAÇÃO COERENTE</div><div class="scen-reason">O Agente unificou o pedido, pediu os dados que faltavam sem redundância e enviou uma única confirmação (#008) com Pilates, 18/10 e 12h. A reafirmação em #010 respondeu a uma dúvida da cliente e não criou um novo agendamento.</div><div class="scen-numero">número/instância: 5548976802387</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct023-duas-mensagens-em-sequencia-imediata-geram-uma-confirmacao-coerente-2026-10-17T22-43-58-932Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct023-duas-mensagens-em-sequencia-imediata-geram-uma-confirmacao-coerente-2026-10-13T22-57-45-133Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct023-duas-mensagens-em-sequencia-imediata-geram-uma-confirmacao-coerente-2026-10-17T21-12-05-655Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details><details class="scenario-card"><summary><div class="scen-main"><div class="scen-name">CT024 - PERGUNTA SOBRE VAGA NÃO GERA AFIRMAÇÃO DE CONSULTA AO SISTEMA</div><div class="scen-reason">Após apresentar as opções de Funcional, o Agente não alegou consulta a sistema, não citou dados pessoais não informados e conduziu o agendamento só com os horários já apresentados.</div><div class="scen-numero">número/instância: 5548954280217</div></div><span class="badge good">PASSOU</span><span class="scen-link"><a href="./ct024-pergunta-sobre-vaga-nao-gera-afirmacao-de-consulta-ao-sistema-2026-10-17T22-44-06-155Z.html">ver conversa →</a></span></summary><div class="timeline"><a class="tl-chip" href="./ct024-pergunta-sobre-vaga-nao-gera-afirmacao-de-consulta-ao-sistema-2026-10-13T22-57-58-368Z.html"><span class="tl-date">13/10/2026</span><span class="badge sm bad">FALHOU</span></a><a class="tl-chip" href="./ct024-pergunta-sobre-vaga-nao-gera-afirmacao-de-consulta-ao-sistema-2026-10-17T21-11-57-847Z.html"><span class="tl-date">17/10/2026</span><span class="badge sm bad">FALHOU</span></a><div class="tl-chip is-latest"><span class="tl-date">atual</span><span class="badge sm good">PASSOU</span></div></div></details></div></body>
+</html>

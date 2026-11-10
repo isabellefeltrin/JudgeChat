@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>rafael :: transcript_log</title>
+<style>
+  :root {
+    --bg: #060812;
+    --surface: #0d1120;
+    --surface-alt: #10162b;
+    --line: #202a4a;
+    --cyan: #2fd8ff;
+    --magenta: #ff4fb0;
+    --amber: #ffcf5c;
+    --text: #e7ecf9;
+    --muted: #6b7699;
+    --mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, ui-monospace, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(47, 216, 255, 0.12), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  [tabindex]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  .header {
+    padding: 26px clamp(16px, 5vw, 48px) 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 8px;
+  }
+  .title {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(22px, 3.6vw, 32px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    text-shadow: 0 0 16px rgba(47, 216, 255, 0.6), 0 0 40px rgba(47, 216, 255, 0.25);
+    margin: 0 0 6px;
+    text-wrap: balance;
+    border-bottom: 2px solid var(--cyan);
+    box-shadow: 0 8px 12px -8px rgba(47, 216, 255, 0.7);
+    padding-bottom: 4px;
+  }
+  .brief {
+    font-size: 13.5px;
+    color: var(--muted);
+    max-width: 60ch;
+    line-height: 1.5;
+    margin: 8px 0 14px;
+  }
+  .stats {
+    display: flex;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats strong { color: var(--text); font-weight: 600; }
+
+  .chat {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .row { display: flex; align-items: flex-end; gap: 8px; }
+  .row.cliente { justify-content: flex-end; }
+  .row.academia { justify-content: flex-start; }
+
+  .avatar {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--surface);
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  }
+  .avatar.cliente { color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.6), 0 0 10px rgba(47, 216, 255, 0.45); }
+  .avatar.academia { color: var(--magenta); box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.6), 0 0 10px rgba(255, 79, 176, 0.45); }
+
+  .bubble {
+    max-width: 82%;
+    min-width: 0;
+    padding: 9px 14px;
+    background: var(--surface);
+  }
+  .bubble.cliente {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.45), 0 0 16px rgba(47, 216, 255, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+  }
+  .bubble.academia {
+    background: var(--surface-alt);
+    box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.45), 0 0 16px rgba(255, 79, 176, 0.15);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .meta { display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px; }
+  .meta .author {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .cliente .author { color: var(--cyan); }
+  .academia .author { color: var(--magenta); }
+  .meta .tag { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .empty {
+    text-align: center;
+    font-family: var(--mono);
+    color: var(--muted);
+    padding: 56px 16px;
+    border: 1px dashed var(--line);
+  }
+
+  .evaluation {
+    margin-top: 16px;
+    padding: 12px 16px;
+    max-width: 60ch;
+    background: var(--surface);
+    border-left: 3px solid var(--muted);
+  }
+  .evaluation.good { border-left-color: #4ade80; }
+  .evaluation.bad { border-left-color: #f87171; }
+  .eval-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  .eval-score {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .good .eval-score { color: #4ade80; }
+  .bad .eval-score { color: #f87171; }
+  .unknown .eval-score { color: var(--muted); }
+  .eval-reason {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .gherkin { margin: 14px 0 0; max-width: 70ch; }
+  .gherkin-summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .gherkin-summary:hover { color: var(--cyan); }
+  .gherkin-text {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--cyan);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .batch { max-width: 1080px; margin: 0 auto; padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px; }
+  .batch table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .batch th, .batch td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .batch th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .batch td.reason { color: var(--text); max-width: 44ch; }
+  .batch td.numero { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .batch td a { color: var(--cyan); text-decoration: none; }
+  .batch td a:hover { text-decoration: underline; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .badge.good { color: #4ade80; box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.5); }
+  .badge.bad { color: #f87171; box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.5); }
+  .badge.unknown { color: var(--muted); box-shadow: inset 0 0 0 1px rgba(107, 118, 153, 0.5); }
+  .badge.erro { color: var(--amber); box-shadow: inset 0 0 0 1px rgba(255, 207, 92, 0.5); }
+  .badge.sm { font-size: 10px; padding: 2px 7px; }</style>
+</head>
+<body><div class="header"><p class="eyebrow">transcript_log // sessão encerrada</p><h1 class="title">rafael</h1><p class="brief">Lead novo, ainda sem nenhum contato anterior com a academia, que acabou de topar fazer a aula experimental de Funcional. Tem uma rotina de trabalho apertada e só enxerga disponibilidade própria no horário de almoço, por isso insiste especificamente na terça-feira às 12h. É educado mas um pouco inflexível de início, esperando que a academia se adapte à sua agenda. Se for informado que esse horário não existe na grade, espera que o atendente ofereça alternativas reais (apenas 06h, 08h ou 10h) e decide a partir delas, sem insistir indefinidamente no horário indisponível.</p><div class="stats"><span>msgs <strong>008</strong></span><span>número <strong>5548935716857</strong></span><span>gerado <strong>17/10/2026, 19:41:49</strong></span></div><details class="gherkin"><summary class="gherkin-summary">cenário testado (Gherkin)</summary><pre class="gherkin-text">@criterio:aula-experimental-ct014-1-horario-de-funcional-fora-da-grade-nao-e-aceito.md
+Cenário: CT014 - HORÁRIO DE FUNCIONAL FORA DA GRADE NÃO É ACEITO [12h]
+  Dado que sou um lead novo, sem conversa anterior com a academia
+  E que já aceitei o convite para a aula experimental de Funcional
+  Quando eu digo que só consigo na terça-feira às 12h
+  Então o Agente não deve oferecer nem confirmar aula experimental de Funcional às 12h
+  E o Agente deve manter como opção apenas os horários das 06h, 08h e 10h</pre></details><div class="evaluation good"><p class="eval-eyebrow">avaliação automática</p><p class="eval-score">PASSOU</p><p class="eval-reason">O Agente rejeitou explicitamente o horário das 12h em #004, ofereceu apenas 6h, 8h e 10h e confirmou 6h em #006 e #008. A frase ambígua de #002 (&quot;Consigo verificar... às 12h&quot;) foi corrigida logo em seguida e não chegou a ser um aceite.</p></div></div><div class="chat"><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">rafael</span><span class="tag">#001</span></div><div class="text">Oi, bom dia! Aceitei o convite pra fazer a aula experimental de Funcional, mas só consigo ir na terça-feira às 12h, dá pra marcar nesse horário?</div></div><div class="avatar cliente">R</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#002</span></div><div class="text">Consigo verificar a aula experimental de *Funcional* na terça-feira, dia *20/10*, às 12h. Qual é o seu primeiro nome?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">rafael</span><span class="tag">#003</span></div><div class="text">Rafael</div></div><div class="avatar cliente">R</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#004</span></div><div class="text">Prazer, Rafael! Me passa seu sobrenome? Não é obrigatório para marcar.<br><br>Na terça-feira, *20/10*, as opções de aula experimental de Funcional são:<br><br>1. 6h<br>2. 8h<br>3. 10h<br><br>Não encontrei horário às 12h nesse dia. Qual desses horários funciona pra você?</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">rafael</span><span class="tag">#005</span></div><div class="text">Poxa, 12h seria o único horário que consigo. Mas de manhã cedo dá, então prefiro às 6h mesmo. Fica marcado pra terça?</div></div><div class="avatar cliente">R</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#006</span></div><div class="text">Ficou marcado, Rafael: sua aula experimental de *Funcional* será na terça-feira, *20/10, às 6h*. O sobrenome não é necessário para o agendamento.</div></div></div><div class="row cliente"><div class="bubble cliente"><div class="meta"><span class="author">rafael</span><span class="tag">#007</span></div><div class="text">Show, então fica certo pra terça às 6h. Obrigado!</div></div><div class="avatar cliente">R</div></div><div class="row academia"><div class="avatar academia">IA</div><div class="bubble academia"><div class="meta"><span class="author">Agentes de IA</span><span class="tag">#008</span></div><div class="text">Isso, Rafael: terça-feira, *20/10, às 6h*. Até lá!</div></div></div></div></body>
+</html>

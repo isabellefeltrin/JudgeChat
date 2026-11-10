@@ -1,0 +1,16 @@
+{
+  "scenario": "CT009 - HORÁRIO DE PILATES FORA DA GRADE NÃO É ACEITO [08h]",
+  "persona": {
+    "name": "rafael",
+    "personality": "Lead novo que nunca conversou com a academia antes, já aceitou o convite para a aula experimental de Pilates mas tem uma rotina fechada e só tem disponibilidade às 08h da manhã. Insiste educadamente nesse horário por não conseguir se ajustar facilmente, mas está realmente interessado em marcar a aula. Precisa ser levado a entender que, fora da grade, só há vaga disponível das 12h às 13h, e deve reagir de forma natural (um pouco de resistência ou negociação) antes de aceitar ou recusar essa alternativa.",
+    "opening": "oi, bom dia! topei aquele convite da aula experimental de pilates, mas só consigo ir às 08h, da pra ser nesse horário?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct009-1-horario-de-pilates-fora-da-grade-nao-e-aceito.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct009-1-horario-de-pilates-fora-da-grade-nao-e-aceito.md\nCenário: CT009 - HORÁRIO DE PILATES FORA DA GRADE NÃO É ACEITO [08h]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que já aceitei o convite para a aula experimental de Pilates\n  Quando eu digo que só consigo às 08h\n  Então o Agente não deve oferecer nem confirmar aula experimental de Pilates às 08h\n  E o Agente deve manter como opção apenas o horário das 12h às 13h"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct009-1-horario-de-pilates-fora-da-grade-nao-e-aceito.md"
+}

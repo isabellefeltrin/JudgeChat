@@ -1,0 +1,16 @@
+{
+  "scenario": "CT010 - PILATES DE HOJE É OFERECIDO ENQUANTO A AULA NÃO COMEÇOU [08h30]",
+  "persona": {
+    "name": "carla",
+    "personality": "Carla é uma lead nova, nunca conversou com essa academia antes, mandando mensagem por volta das 08h30. Está decidida e animada para começar Pilates, sem enrolação, direto ao ponto. Quando o atendimento oferece para ela escolher um horário de aula, ela aceita prontamente e demonstra interesse em já se organizar para participar. É receptiva, educada e confia nas sugestões do atendente, mas espera respostas rápidas e objetivas.",
+    "opening": "Oi, bom dia! Vi o perfil de vocês e fiquei interessada em fazer Pilates, como funciona?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct010-1-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-co.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct010-1-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-co.md\nCenário: CT010 - PILATES DE HOJE É OFERECIDO ENQUANTO A AULA NÃO COMEÇOU [08h30]\n  Dado que, no horário de Brasília, são 08h30 no momento da conversa\n  E que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Pilates\n  E aceito o convite para escolher um horário\n  Então o Agente deve poder oferecer a aula de hoje às 12h entre as opções de data"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct010-1-pilates-de-hoje-e-oferecido-enquanto-a-aula-nao-co.md"
+}

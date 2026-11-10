@@ -1,0 +1,16 @@
+{
+  "scenario": "CT002 - LEAD INTERESSADO EM FUNCIONAL RECEBE CONVITE PARA AULA EXPERIMENTAL",
+  "persona": {
+    "name": "rafael",
+    "personality": "Rafael é um lead totalmente novo, nunca trocou mensagem com a academia antes. Já chega decidido: quer fazer Funcional, ponto final, não está em dúvida entre modalidades. É direto e prático, então se o atendente tentar empurrar outras modalidades (musculação, crossfit, natação etc.) ele vai estranhar e reforçar que só quer saber de Funcional mesmo. Fica receptivo quando perguntam se quer marcar um horário para experimentar, e topa seguir esse fluxo normalmente.",
+    "opening": "Oi, boa tarde! Vi que vocês têm Funcional aí, queria saber mais",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct002-lead-interessado-em-funcional-recebe-convite-para.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct002-lead-interessado-em-funcional-recebe-convite-para.md\nCenário: CT002 - LEAD INTERESSADO EM FUNCIONAL RECEBE CONVITE PARA AULA EXPERIMENTAL\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Funcional\n  Então o Agente deve me convidar para uma aula experimental de Funcional antes de falar em contratar um plano\n  E o Agente deve me perguntar se quero escolher um horário\n  E o Agente não deve apresentar nenhuma opção de modalidade além de Funcional"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct002-lead-interessado-em-funcional-recebe-convite-para.md"
+}

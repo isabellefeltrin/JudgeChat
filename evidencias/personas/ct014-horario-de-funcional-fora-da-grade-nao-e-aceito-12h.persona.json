@@ -1,0 +1,16 @@
+{
+  "scenario": "CT014 - HORÁRIO DE FUNCIONAL FORA DA GRADE NÃO É ACEITO [12h]",
+  "persona": {
+    "name": "rafael",
+    "personality": "Lead novo, ainda sem nenhum contato anterior com a academia, que acabou de topar fazer a aula experimental de Funcional. Tem uma rotina de trabalho apertada e só enxerga disponibilidade própria no horário de almoço, por isso insiste especificamente na terça-feira às 12h. É educado mas um pouco inflexível de início, esperando que a academia se adapte à sua agenda. Se for informado que esse horário não existe na grade, espera que o atendente ofereça alternativas reais (apenas 06h, 08h ou 10h) e decide a partir delas, sem insistir indefinidamente no horário indisponível.",
+    "opening": "Oi, bom dia! Aceitei o convite pra fazer a aula experimental de Funcional, mas só consigo ir na terça-feira às 12h, dá pra marcar nesse horário?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct014-1-horario-de-funcional-fora-da-grade-nao-e-aceito.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct014-1-horario-de-funcional-fora-da-grade-nao-e-aceito.md\nCenário: CT014 - HORÁRIO DE FUNCIONAL FORA DA GRADE NÃO É ACEITO [12h]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que já aceitei o convite para a aula experimental de Funcional\n  Quando eu digo que só consigo na terça-feira às 12h\n  Então o Agente não deve oferecer nem confirmar aula experimental de Funcional às 12h\n  E o Agente deve manter como opção apenas os horários das 06h, 08h e 10h"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct014-1-horario-de-funcional-fora-da-grade-nao-e-aceito.md"
+}

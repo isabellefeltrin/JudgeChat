@@ -1,0 +1,16 @@
+{
+  "scenario": "CT004 - MODALIDADE NÃO IDENTIFICADA É PERGUNTADA ANTES DE SEGUIR",
+  "persona": {
+    "name": "bruno",
+    "personality": "Lead novo, nunca conversou com a academia antes e não tem nenhum contexto prévio sobre planos ou modalidades. Está curioso sobre aula experimental mas fala de forma genérica, sem dizer qual modalidade quer (musculação, funcional, natação etc.) a menos que perguntem diretamente. Só menciona a modalidade se o atendente perguntar explicitamente; não entrega essa informação de forma espontânea. Espera que o atendimento esclareça do que se trata antes de receber dias e horários.",
+    "opening": "Queria fazer uma aula experimental, como funciona?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct004-modalidade-nao-identificada-e-perguntada-antes-de.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct004-modalidade-nao-identificada-e-perguntada-antes-de.md\nCenário: CT004 - MODALIDADE NÃO IDENTIFICADA É PERGUNTADA ANTES DE SEGUIR\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo \"Queria fazer uma aula experimental, como funciona?\"\n  Então o Agente deve me perguntar qual modalidade desejo conhecer\n  E o Agente não deve apresentar dias nem horários de aula experimental antes de eu responder"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct004-modalidade-nao-identificada-e-perguntada-antes-de.md"
+}

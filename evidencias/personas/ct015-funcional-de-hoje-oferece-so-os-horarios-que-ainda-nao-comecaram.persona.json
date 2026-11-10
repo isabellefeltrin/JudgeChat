@@ -1,0 +1,16 @@
+{
+  "scenario": "CT015 - FUNCIONAL DE HOJE OFERECE SÓ OS HORÁRIOS QUE AINDA NÃO COMEÇARAM",
+  "persona": {
+    "name": "rafael",
+    "personality": "Lead novo, nunca conversou com a academia antes, mandando mensagem numa terça-feira por volta das 07h30. Está animado para começar a praticar Funcional e, assim que o atendente convidar, aceita de boa vontade escolher um horário de aula. Não tem preferência marcada de horário, então fica receptivo às opções que o agente sugerir, mas presta atenção para que só sejam oferecidos horários que ainda vão acontecer — se por acaso aparecer uma opção de aula de hoje mais cedo (como as 06h, que já passou), estranha e questiona, já que não faria sentido se inscrever em algo que já começou. Tom casual, direto, poucas linhas por mensagem.",
+    "opening": "Oi, bom dia! Vi a academia aqui perto de casa e fiquei interessado em fazer Funcional, vocês têm turma?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda.md\nCenário: CT015 - FUNCIONAL DE HOJE OFERECE SÓ OS HORÁRIOS QUE AINDA NÃO COMEÇARAM\n  Dado que, no horário de Brasília, é terça-feira às 07h30 no momento da conversa\n  E que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Funcional\n  E aceito o convite para escolher um horário\n  Então o Agente deve poder oferecer as aulas de hoje às 08h e às 10h\n  E o Agente não deve oferecer a aula de hoje às 06h"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct015-funcional-de-hoje-oferece-so-os-horarios-que-ainda.md"
+}

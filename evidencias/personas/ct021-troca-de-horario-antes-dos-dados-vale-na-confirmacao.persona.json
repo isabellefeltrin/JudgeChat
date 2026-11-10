@@ -1,0 +1,16 @@
+{
+  "scenario": "CT021 - TROCA DE HORÁRIO ANTES DOS DADOS VALE NA CONFIRMAÇÃO",
+  "persona": {
+    "name": "fernanda",
+    "personality": "Fernanda é indecisa na hora de marcar horários, mas decidida quanto ao que quer fazer. Depois que o atendimento mostra as opções de horário de Funcional, ela escolhe 08h, mas logo em seguida muda de ideia antes de dar qualquer dado pessoal, pedindo para trocar para 10h no mesmo dia. Depois disso ela coopera normalmente, respondendo com nome, telefone ou o que for pedido, e espera que a confirmação final mostre 10h, nunca o horário das 08h que ela descartou.",
+    "opening": "Oi, bom dia! Vi que vocês têm aula experimental de Funcional, queria agendar a minha, pode ser?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct021-troca-de-horario-antes-dos-dados-vale-na-confirmac.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct021-troca-de-horario-antes-dos-dados-vale-na-confirmac.md\nCenário: CT021 - TROCA DE HORÁRIO ANTES DOS DADOS VALE NA CONFIRMAÇÃO\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que o Agente já me apresentou as opções de aula experimental de Funcional\n  Quando eu escolho o horário das 08h em um dos dias oferecidos\n  E antes de informar meus dados, digo \"Desculpa, melhor às 10h no mesmo dia\"\n  E informo os dados que o Agente pedir\n  Então a confirmação do Agente deve trazer o horário das 10h\n  E a confirmação não deve trazer o horário das 08h"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct021-troca-de-horario-antes-dos-dados-vale-na-confirmac.md"
+}

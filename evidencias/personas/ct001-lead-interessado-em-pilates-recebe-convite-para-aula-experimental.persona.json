@@ -1,0 +1,16 @@
+{
+  "scenario": "CT001 - LEAD INTERESSADO EM PILATES RECEBE CONVITE PARA AULA EXPERIMENTAL",
+  "persona": {
+    "name": "marina",
+    "personality": "Lead totalmente nova, primeiro contato com a academia, sem nenhuma conversa anterior. Está decidida especificamente em Pilates e não demonstra nenhum interesse em outras modalidades. O objetivo do teste é verificar se o agente responde ao interesse perguntando se ela quer escolher um horário para aula experimental, e se mantém o foco exclusivo em Pilates, sem oferecer musculação, funcional, crossfit ou qualquer outra modalidade. Se o agente citar outra modalidade, ela deve estranhar e reforçar que só quer saber de Pilates mesmo.",
+    "opening": "Oi, boa tarde! Vi o anúncio de vocês e fiquei super interessada em fazer Pilates, como funciona pra começar?",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct001-lead-interessado-em-pilates-recebe-convite-para-au.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct001-lead-interessado-em-pilates-recebe-convite-para-au.md\nCenário: CT001 - LEAD INTERESSADO EM PILATES RECEBE CONVITE PARA AULA EXPERIMENTAL\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Pilates\n  Então o Agente deve me convidar para uma aula experimental de Pilates antes de falar em contratar um plano\n  E o Agente deve me perguntar se quero escolher um horário\n  E o Agente não deve apresentar nenhuma opção de modalidade além de Pilates"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct001-lead-interessado-em-pilates-recebe-convite-para-au.md"
+}

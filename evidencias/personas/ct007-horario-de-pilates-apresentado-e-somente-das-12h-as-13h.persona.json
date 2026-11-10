@@ -1,0 +1,16 @@
+{
+  "scenario": "CT007 - HORÁRIO DE PILATES APRESENTADO É SOMENTE DAS 12H ÀS 13H",
+  "persona": {
+    "name": "beatriz",
+    "personality": "Beatriz é uma lead nova, nunca conversou com a academia antes. Está interessada em experimentar uma aula de Pilates e topa de cara quando recebem o convite para marcar um horário experimental. É direta e colaborativa: quando o atendimento pede para ela escolher uma data, ela aguarda essa orientação antes de prosseguir, sem insistir em outros horários ou alternativas. Seu objetivo é só entender como funciona o agendamento da aula experimental de Pilates.",
+    "opening": "Oi, boa tarde! Vi que vocês têm Pilates aí, queria saber mais sobre as aulas",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct007-horario-de-pilates-apresentado-e-somente-das-12h-a.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct007-horario-de-pilates-apresentado-e-somente-das-12h-a.md\nCenário: CT007 - HORÁRIO DE PILATES APRESENTADO É SOMENTE DAS 12H ÀS 13H\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  Quando eu digo que tenho interesse em fazer Pilates\n  E aceito o convite para escolher um horário\n  Então o Agente deve apresentar o horário das 12h às 13h\n  E o Agente deve me pedir para escolher uma data\n  E o Agente não deve sugerir nenhum outro horário de aula experimental de Pilates"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct007-horario-de-pilates-apresentado-e-somente-das-12h-a.md"
+}

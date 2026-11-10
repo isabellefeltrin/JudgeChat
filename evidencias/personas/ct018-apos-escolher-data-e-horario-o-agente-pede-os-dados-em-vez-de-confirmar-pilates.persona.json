@@ -1,0 +1,16 @@
+{
+  "scenario": "CT018 - APÓS ESCOLHER DATA E HORÁRIO O AGENTE PEDE OS DADOS EM VEZ DE CONFIRMAR [Pilates]",
+  "persona": {
+    "name": "mariana",
+    "personality": "Lead nova, nunca conversou com a academia antes, chegou perguntando sobre aula experimental de pilates e recebeu algumas opções de data e horário. É direta e decidida: assim que vê as opções, já escolhe a primeira sem pensar muito. Espera que, ao confirmar a escolha, o atendente siga o fluxo natural pedindo os dados necessários para fechar o agendamento (nome, telefone, etc.), e fica desconfiada se o agente disser que a aula já está marcada sem ter pedido nada antes. Não tem paciência para ser mandada se cadastrar em outro site, app ou link externo antes de continuar — quer resolver tudo ali mesmo, pelo WhatsApp.",
+    "opening": "Oi! Pode ser nesse primeiro horário e data que vocês passaram mesmo, bora marcar minha aula experimental de pilates!",
+    "targetNumber": null,
+    "scriptOf": "",
+    "evaluate": true,
+    "criteriaFile": "aula-experimental-ct018-1-apos-escolher-data-e-horario-o-agente-pede-os-dado.md",
+    "criteriaSource": "",
+    "manualConfig": null,
+    "gherkinScenario": "@criterio:aula-experimental-ct018-1-apos-escolher-data-e-horario-o-agente-pede-os-dado.md\nCenário: CT018 - APÓS ESCOLHER DATA E HORÁRIO O AGENTE PEDE OS DADOS EM VEZ DE CONFIRMAR [Pilates]\n  Dado que sou um lead novo, sem conversa anterior com a academia\n  E que o Agente já me apresentou as opções de aula experimental de Pilates\n  Quando eu escolho a primeira data e o primeiro horário que o Agente ofereceu\n  Então o Agente deve repetir a modalidade, a data e o horário que escolhi\n  E o Agente deve me pedir os dados necessários para o agendamento\n  E o Agente não deve afirmar que a aula já está agendada\n  E o Agente não deve me pedir para me cadastrar ou me identificar em outro lugar antes de seguir"
+  },
+  "criteriaPath": "C:\\Users\\isafel\\OneDrive\\Documentos\\Desenvolvimento\\IA\\Zapia\\criteria\\aula-experimental-ct018-1-apos-escolher-data-e-horario-o-agente-pede-os-dado.md"
+}
