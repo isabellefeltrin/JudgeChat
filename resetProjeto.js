@@ -7,19 +7,6 @@
 //   node resetProjeto.js            → mostra o que seria apagado e pede confirmação (s/n)
 //   node resetProjeto.js --yes      → apaga sem perguntar (uso em script/CI)
 //   node resetProjeto.js --dry-run  → só lista o que seria apagado, não apaga nada
-//
-// O que é apagado:
-//   - features/**                          (todos os cenários Gherkin)
-//   - criteria/*.md, EXCETO default.md (critério manual reutilizável, não
-//     gerado a partir de um cenário)
-//   - logs/batch/**, logs/conversation.log, logs/response.txt, logs/bot.log
-//   - persona.json (raiz)
-//   - reports/*.html
-//
-// O que NÃO é tocado: node_modules/, .env, .wwebjs_auth/ (sessão do
-// WhatsApp), docs/, scripts .js do projeto, default.md, e massas.json
-// (mapeamento massa→telefone real, amarrado ao ambiente testado, não ao
-// PRD — ver massas.js).
 process.noDeprecation = true;
 const fs = require('fs');
 const path = require('path');
@@ -29,15 +16,16 @@ const { ansi, paint, divider, createAsk } = require('./terminalUi');
 
 const ROOT = __dirname;
 const KEEP_CRITERIA = new Set(['default.md']);
+const KEEP_FEATURES = new Set(['exemplo-minimo']); // bateria de exemplo versionada
+const isKeptCriteria = (name) => KEEP_CRITERIA.has(name) || name.startsWith('exemplo-');
 
-// Lista (não apaga ainda) tudo que entraria na limpeza, como uma lista de
-// alvos { label, absPath, isDir }.
 function collectTargets() {
   const targets = [];
 
   const featuresDir = path.join(ROOT, 'features');
   if (fs.existsSync(featuresDir)) {
     for (const entry of fs.readdirSync(featuresDir)) {
+      if (KEEP_FEATURES.has(entry)) continue;
       targets.push({ label: `features/${entry}`, absPath: path.join(featuresDir, entry) });
     }
   }
@@ -45,7 +33,7 @@ function collectTargets() {
   const criteriaDir = path.join(ROOT, 'criteria');
   if (fs.existsSync(criteriaDir)) {
     for (const entry of fs.readdirSync(criteriaDir)) {
-      if (KEEP_CRITERIA.has(entry)) continue;
+      if (isKeptCriteria(entry)) continue;
       if (!entry.endsWith('.md')) continue;
       targets.push({ label: `criteria/${entry}`, absPath: path.join(criteriaDir, entry) });
     }

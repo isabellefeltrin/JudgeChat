@@ -1,4 +1,4 @@
-# Como rodar a Zapia — todas as formas
+# Como rodar a JudgeChat — todas as formas
 
 Referência rápida de tudo que dá pra disparar neste projeto. Pra uma visão geral do que cada arquivo faz, veja o [README](../README.md).
 
@@ -7,10 +7,9 @@ Referência rápida de tudo que dá pra disparar neste projeto. Pra uma visão g
 ## 0. Pré-requisitos (valem pra tudo abaixo)
 
 - `npm install` (uma vez).
-- Um provedor de IA configurado (`AI_PROVIDER` no `.env` — padrão `claude`; ver seção "Provedor de IA" no README para as opções `claude`/`copilot`/`gemini`/`codex` e o que cada uma exige). Com o padrão `claude`, precisa do CLI do Claude Code instalado e autenticado no terminal — teste com `claude -p "oi"`.
+- Um provedor de IA configurado (`AI_PROVIDER` no `.env` — padrão `claude`; ver seção "Provedor de IA" no README para as opções `claude`/`copilot`/`codex` e o que cada uma exige). Com o padrão `claude`, precisa do CLI do Claude Code instalado e autenticado no terminal — teste com `claude -p "oi"`.
 - `.env` na raiz do projeto (copie de `.env.example` se existir). Variáveis usadas:
   - `TARGET_NUMBER` — número de WhatsApp alvo padrão (opcional; se não tiver, o programa pergunta toda vez).
-  - `NEXTIA_DEBUG_BASE_URL`, `NEXTIA_DEBUG_INSTANCIA_TOKEN` — só necessárias se for usar o modo Debug API do `batch-runner.js` (ver seção 2 abaixo).
 - **Primeira execução**: aparece um QR Code no terminal pra parear com o WhatsApp. A sessão fica salva em `.wwebjs_auth/` — nas próximas vezes conecta direto, sem pedir QR de novo (a menos que a sessão expire ou seja invalidada).
 
 ---
@@ -62,12 +61,11 @@ Pra qualquer pasta que você criar com arquivos `.feature` seguindo o mesmo padr
 
 Fluxo, sem pular etapas:
 
-1. **Massas de teste**: se algum cenário selecionado tem a tag `@massa:<id>` (ver seção "Massa de teste" do [README](../README.md)), lê o telefone real (e qualquer outro dado extra — dia, modalidade etc.) dela em `massas.json` — nunca pergunta no terminal. Se faltar telefone pra alguma massa usada, recusa a bateria com um erro listando exatamente o que adicionar ao arquivo.
+1. **Massas de teste**: se algum cenário selecionado tem a tag `@massa:<id>` (ver seção "Massa de teste" do [README](../README.md)), lê o telefone real (e qualquer outro dado extra — dia, horário etc.) dela em `massas.json` — nunca pergunta no terminal. Se faltar telefone pra alguma massa usada, recusa a bateria com um erro listando exatamente o que adicionar ao arquivo.
 2. **Preparação** (ainda sem WhatsApp): pra cada cenário da pasta, mostra um rascunho de personalidade gerado por IA — já usando os dados da massa, se houver — (aprova com Enter, edita com `e`, gera de novo com `r`) e o critério vinculado (se o `.md` já existe, pergunta se usa como está / edita / regenera; se não existe, gera um rascunho e exige revisão antes de salvar).
-3. **Configuração da bateria** (uma vez, vale pra todos os cenários dela): escolhe entre WhatsApp real ou Debug API (ver abaixo).
+3. **Configuração da bateria** (uma vez, vale pra todos os cenários dela): número de WhatsApp alvo.
 4. **Execução**:
-   - **WhatsApp real**: sequencial, um cenário por vez, no mesmo número, com 5 minutos de espera entre um e o próximo (a janela real até a sessão do agente fechar). Erro técnico (WhatsApp caiu etc.) tenta reconectar e pula a espera; se não reconectar, os cenários restantes ficam marcados como erro sem rodar.
-   - **Debug API** (`api/debug/chat` do orquestrador, sem WhatsApp — ver [docs/qa-debug-chat-playwright.md](qa-debug-chat-playwright.md)): mais rápido, roda em blocos paralelos (pergunta a concorrência, recomendado 3 a 5 pra não sobrecarregar o Sandbox — mais que isso aumenta a chance do próprio Sandbox derrubar a conexão no meio de uma conversa). Cada cenário tenta até 3 vezes (1 original + 2 retentativas, 5s de espera entre elas) antes de virar ERRO TÉCNICO de vez — cobre o caso comum de "fetch failed" transitório por sobrecarga. Cenários já com veredito PASSOU/FALHOU de uma execução anterior (`logs/batch/<bateria>/results.json`) são reaproveitados e não rodam de novo — só quem ficou em erro técnico é reexecutado.
+   - Sequencial, um cenário por vez, no mesmo número, com 5 minutos de espera entre um e o próximo (a janela real até a sessão do agente fechar). Erro técnico (WhatsApp caiu etc.) tenta reconectar e pula a espera; se não reconectar, os cenários restantes ficam marcados como erro sem rodar.
 5. **Relatório**: tabela ao vivo no terminal + HTML consolidado em `reports/bateria-<pasta>-<data>.html`, linkando pro relatório individual de cada cenário (ou a payload técnica, em `logs/batch/<bateria>/<cenário>.erro-tecnico.json`, se der erro técnico). Esse relatório também ganha, no topo, uma tira com as execuções anteriores desta bateria e, em cada linha da tabela, uma seta (▸) que abre o histórico de vereditos daquele cenário — ver seção "Histórico de baterias e comparação entre execuções" do [README](../README.md). O índice completo (com a comparação lado a lado entre duas execuções) fica em `reports/historico-<pasta>.html`.
 
 **Durante a execução**: primeiro `Ctrl+C` aborta a bateria após o cenário atual (ou durante a espera entre cenários) e ainda gera o relatório consolidado com o que já rodou; segundo `Ctrl+C` força saída imediata sem gerar nada.
@@ -110,4 +108,4 @@ Apaga `features/**`, `criteria/*.md` (exceto `default.md`, que é o critério ma
 
 ## 5. Coisas que existem mas ainda **não** fazem nada de verdade
 
-- **Múltiplas instâncias/números em paralelo via WhatsApp real** — não implementado; nesse modo tudo roda sequencial, um número por vez (o modo Debug API, descrito acima, já roda em paralelo, mas sem WhatsApp de verdade).
+- **Múltiplas instâncias/números em paralelo via WhatsApp real** — não implementado; nesse modo tudo roda sequencial, um número por vez.
