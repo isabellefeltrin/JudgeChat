@@ -1,5 +1,5 @@
 ---
-name: zapia-rascunhador-persona
+name: judgechat-rascunhador-persona
 description: Transforma os passos Dado/Quando/E de um cenário Gherkin numa personalidade de cliente simulado de WhatsApp
 ---
 

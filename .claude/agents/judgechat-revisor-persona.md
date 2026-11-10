@@ -1,5 +1,5 @@
 ---
-name: zapia-revisor-persona
+name: judgechat-revisor-persona
 description: Confere se um rascunho de personalidade de cliente simulado é fiel ao cenário Gherkin original antes de ser usado numa conversa de teste
 ---
 

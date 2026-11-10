@@ -1,5 +1,5 @@
 ---
-name: zapia-revisor-criterio
+name: judgechat-revisor-criterio
 description: Confere se um rascunho de critério do juiz é fiel ao cenário Gherkin original e avalia só o que é observável na conversa
 ---
 
