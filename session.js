@@ -1,14 +1,14 @@
 // Lógica reusável de "conectar ao WhatsApp", "rodar uma conversa até o fim" e
-// "avaliar e gerar relatório", extraída de cli.js para ser chamada tanto pelo
-// modo interativo (cli.js) quanto pelo runner em lote (batch-runner.js).
+// "avaliar e gerar relatório", usada tanto pelo modo interativo (cli.js)
+// quanto pelo runner em lote (batch-runner.js).
 //
-// Diferença importante em relação ao código original de cli.js: aqui NUNCA se
-// chama process.exit — falhas viram rejeição de Promise, e quem chama decide
+// Aqui NUNCA se chama process.exit — falhas viram rejeição de Promise, e quem chama decide
 // o que fazer (cli.js aborta o processo; batch-runner.js decide por
 // cenário/por bateria).
 const fs = require('fs');
 const path = require('path');
 const { createWhatsAppClient } = require('./whatsapp');
+const { sleep, retry } = require('./lib/utils');
 const { generateReply } = require('./agent');
 const { evaluateConversation } = require('./judge');
 const { generateHtmlReport } = require('./report');
@@ -18,28 +18,17 @@ const MAX_CONSECUTIVE_SHORT_TURNS = 4; // corta loop de despedida ("de nada" / "
 const SHORT_TURN_LENGTH = 50;
 
 const NUMBER_LOOKUP_ATTEMPTS = 5;
-const NUMBER_LOOKUP_DELAY_MS = 1500; // mesmo padrão já usado hoje pra getNumberId logo após 'ready'
+const NUMBER_LOOKUP_DELAY_MS = 1500; // getNumberId logo após 'ready' costuma falhar nas primeiras tentativas
 const INIT_MAX_ATTEMPTS = 5;
-const INIT_RETRY_DELAY_MS = 5000; // mesmo padrão já usado hoje pra client.initialize()/reconexão
+const INIT_RETRY_DELAY_MS = 5000; // client.initialize() e reconexão
+const POLL_INTERVAL_MS = 3000;
+const RESPONSE_WATCHER_INTERVAL_MS = 1000;
+const RECONNECT_DELAY_MS = 5000;
+const DESTROY_TIMEOUT_MS = 8000;
 
 const STRUCTURED_MESSAGE_TYPES = ['notification_template', 'interactive', 'buttons_response', 'list_response'];
 
 const stripAnsi = (text) => text.replace(/\x1b\[[0-9;]*m/g, '');
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function retry(fn, attempts, delayMs) {
-  for (let i = 1; i <= attempts; i++) {
-    try {
-      return await fn();
-    } catch (e) {
-      if (i === attempts) throw e;
-      await sleep(delayMs);
-    }
-  }
-}
 
 function extractBody(message) {
   let body = message.body || message.caption || '';
@@ -84,7 +73,7 @@ async function safeDestroy(client) {
   try {
     await Promise.race([
       client.destroy(),
-      new Promise((resolve, reject) => setTimeout(() => reject(new Error('timeout ao encerrar')), 8000)),
+      new Promise((resolve, reject) => setTimeout(() => reject(new Error('timeout ao encerrar')), DESTROY_TIMEOUT_MS)),
     ]);
   } catch {
     if (browserProcess && !browserProcess.killed) browserProcess.kill('SIGKILL');
@@ -117,9 +106,6 @@ async function initializeWithRetry(client) {
   }
 }
 
-// Conecta ao WhatsApp e resolve o chat alvo (targetChatId/targetLid).
-// Rejeita (nunca process.exit) se o número não for encontrado no WhatsApp ou
-// se client.initialize() esgotar as tentativas de reconexão.
 //
 // onFatalDisconnect (opcional) é chamado se o client cair depois de já
 // conectado (evento 'disconnected') e a reconexão automática esgotar as
@@ -168,13 +154,13 @@ async function connectToTarget(targetNumber, { onStatus = () => {}, onFatalDisco
   }
 
   client.on('disconnected', (reason) => {
-    onStatus(`🔌 Desconectado: ${reason}. Reconectando em 5s...`);
+    onStatus(`🔌 Desconectado: ${reason}. Reconectando em ${RECONNECT_DELAY_MS / 1000}s...`);
     setTimeout(() => {
       initializeWithRetry(client).catch((e) => {
         onFatalDisconnect(e);
         fatalReject(e);
       });
-    }, 5000);
+    }, RECONNECT_DELAY_MS);
   });
 
   return {
@@ -186,23 +172,19 @@ async function connectToTarget(targetNumber, { onStatus = () => {}, onFatalDisco
   };
 }
 
-// Roda a conversa (envio da opening, escuta de mensagens do agente real,
-// geração da próxima fala do cliente, polling de fallback, watcher opcional
-// de logs/response.txt) reaproveitando um client já conectado — não fecha o
-// client ao terminar (quem chamou connectToTarget decide quando desconectar).
 //
 // options:
-//   logFile             — se informado, cada turno é gravado nesse arquivo (formato igual ao de hoje)
+//   logFile             — se informado, cada turno é gravado nesse arquivo 
 //   script              — array de falas do cliente a reproduzir literalmente antes de voltar a gerar por IA
 //   enableResponseWatcher/responseFile — habilita o watcher manual de logs/response.txt (só faz sentido no modo interativo)
 //   onLog(role, text)   — chamado a cada mensagem (cliente ou agente), pra quem chamou decidir como exibir
 //   fatalSignal         — a Promise `whenFatal` de connectToTarget; se rejeitar, aborta a conversa em andamento
 //
-// Resolve { history, endedReason: 'natural'|'max_turns'|'short_turn_loop' }.
+// Resolve { history, endedReason: 'natural'|'max_turns'|'short_turn_loop'|'no_answer' }.
 // Rejeita se o envio da mensagem de abertura falhar (a conversa nem chega a
 // começar) ou se fatalSignal rejeitar (o client caiu e não reconectou).
 // Falhas em turnos seguintes (geração de resposta ou envio) são logadas e a
-// conversa CONTINUA — mesmo comportamento de hoje no cli.js interativo.
+// conversa CONTINUA — o cli.js interativo segue o mesmo comportamento.
 async function runConversation({ client, targetChatId, targetLid, persona, options = {} }) {
   const { logFile, script: initialScript = [], enableResponseWatcher = false, responseFile, onLog = () => {}, fatalSignal, onHistoryReady } = options;
   const script = [...initialScript];
@@ -254,7 +236,7 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
       if (settled) return;
       settled = true;
       cleanup();
-      // Mesmo espírito de debugSession.js: quem chamar (batch-runner.js) usa
+      // Quem chamar (batch-runner.js) usa
       // isso pra gravar a payload técnica completa de um ERRO_TECNICO, em vez
       // de só a mensagem resumida do erro.
       error.historySoFar = history.slice();
@@ -279,7 +261,6 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
       history.push({ role: 'agente', text: body });
       trackTurn(body);
 
-      // Serializa: se chegar mais de uma mensagem rápido, gera as respostas em ordem.
       queue = queue.then(() => respondAutomatically(body));
     }
 
@@ -306,6 +287,11 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
         } else {
           reply = await generateReply(persona, history, incomingText);
         }
+        if (reply && typeof reply === 'object' && reply.end === 'no_answer') {
+          onLog('sistema', '(cliente perguntou mais de 3 vezes sem resposta adequada do agente — encerrando)');
+          finish('no_answer');
+          return;
+        }
         if (!reply) {
           onLog('sistema', '(conversa encerrada — nenhuma nova resposta gerada)');
           finish('natural');
@@ -315,9 +301,8 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
         trackTurn(reply);
         await sendMessage(reply);
       } catch (e) {
-        // Mesmo comportamento de hoje: uma falha pontual (IA ou envio) é
-        // logada, mas não derruba a sessão inteira — ela segue esperando a
-        // próxima mensagem do agente real.
+        // Uma falha pontual (IA ou envio) é logada, mas não derruba a sessão:
+        // ela segue esperando a próxima mensagem do agente.
         onLog('sistema', `❌ Falha ao gerar resposta automática: ${e.message}`);
       }
     }
@@ -331,7 +316,7 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
         } catch {
           // silencia falhas transitórias do polling
         }
-      }, 3000);
+      }, POLL_INTERVAL_MS);
     }
 
     function startResponseWatcher() {
@@ -346,7 +331,7 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
         } catch {
           // silencia falhas transitórias do watcher
         }
-      }, 1000);
+      }, RESPONSE_WATCHER_INTERVAL_MS);
     }
 
     client.on('message', handleIncoming);
@@ -372,7 +357,7 @@ async function runConversation({ client, targetChatId, targetLid, persona, optio
   });
 }
 
-// Extraído do saveReport() de cli.js. reportSlug substitui persona.name no
+// reportSlug substitui persona.name no
 // nome do arquivo quando informado (usado pelo batch-runner pra nomear pelo
 // slug do cenário Gherkin, não pelo nome que a IA inventar pro cliente).
 async function evaluateAndReport({ persona, history, reportsDir, reportSlug, onStatus = () => {} }) {
@@ -402,4 +387,4 @@ async function evaluateAndReport({ persona, history, reportsDir, reportSlug, onS
   return { reportPath, evaluationResult };
 }
 
-module.exports = { connectToTarget, runConversation, evaluateAndReport, retry };
+module.exports = { connectToTarget, runConversation, evaluateAndReport };
