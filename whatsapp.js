@@ -77,6 +77,21 @@ function cleanStaleSingletonLock() {
   console.log('\x1b[2m🧹 Sessão anterior não fechou o Chrome corretamente; lock órfão removido.\x1b[0m');
 }
 
+// Quando o WhatsApp invalida a sessão salva (aparelho desvinculado no celular,
+// por exemplo), a whatsapp-web.js tenta apagar a pasta da sessão enquanto o
+// Chrome ainda a mantém aberta e lança EBUSY fora de qualquer try/catch,
+// derrubando o processo com um stack trace confuso. Traduz esse caso.
+process.on('unhandledRejection', (reason) => {
+  const message = String(reason?.message || reason);
+  if (/EBUSY.*\.wwebjs_auth/.test(message)) {
+    console.error('\n\x1b[31m\x1b[1m❌ A sessão salva do WhatsApp foi invalidada.\x1b[0m');
+    console.error('Apague a pasta .wwebjs_auth/session e rode de novo para parear o QR Code outra vez.');
+  } else {
+    console.error(reason);
+  }
+  process.exit(1);
+});
+
 function createWhatsAppClient() {
   cleanStaleSingletonLock();
 

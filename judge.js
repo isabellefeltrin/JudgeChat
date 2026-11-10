@@ -1,53 +1,53 @@
-const fs = require('fs');
-const path = require('path');
-const { callAI } = require('./agent');
+const fs = require("fs");
+const path = require("path");
+const { callAI } = require("./agent");
 
-const CRITERIA_DIR = path.join(__dirname, 'criteria');
-const DEFAULT_CRITERIA_FILE = 'default.md';
+const CRITERIA_DIR = path.join(__dirname, "criteria");
+const DEFAULT_CRITERIA_FILE = "default.md";
 
 function listCriteriaFiles() {
   try {
-    return fs.readdirSync(CRITERIA_DIR).filter((f) => f.endsWith('.md')).sort();
+    return fs
+      .readdirSync(CRITERIA_DIR)
+      .filter((f) => f.endsWith(".md"))
+      .sort();
   } catch {
     return [];
   }
 }
 
 function resolveCriteriaPath(criteriaFile) {
-  const file = criteriaFile && criteriaFile.trim() ? criteriaFile.trim() : DEFAULT_CRITERIA_FILE;
+  const file =
+    criteriaFile && criteriaFile.trim()
+      ? criteriaFile.trim()
+      : DEFAULT_CRITERIA_FILE;
   return path.isAbsolute(file) ? file : path.join(CRITERIA_DIR, file);
 }
 
-// As regras fixas de como julgar (basear-se só no transcript, tratar blocos
-// <exemplo> como calibração, citar EVIDENCIA antes do veredito, formato de
-// resposta) vivem em .claude/agents/zapia-juiz.md — agent.js decide como
-// entregar isso pro provedor de IA configurado (ver AI_PROVIDER no .env).
-// Esta função monta só o que muda a cada avaliação: a transcrição e o
-// critério daquele cenário.
 function buildJudgePrompt(persona, history, criteriaText) {
-  const transcript = history
-    .map((turn, i) => `#${String(i + 1).padStart(3, '0')} ${turn.role === 'cliente' ? persona.name.toUpperCase() : 'AGENTE'}: ${turn.text}`)
-    .join('\n') || '(conversa vazia)';
+  const transcript =
+    history
+      .map(
+        (turn, i) =>
+          `#${String(i + 1).padStart(3, "0")} ${turn.role === "cliente" ? persona.name.toUpperCase() : "AGENTE"}: ${turn.text}`,
+      )
+      .join("\n") || "(conversa vazia)";
 
   return [
-    '## Contexto',
+    "## Contexto",
     `Transcript de uma conversa de WhatsApp entre "${persona.name}" (cliente simulado) e o agente de atendimento em teste. Cada linha tem um número (#001, #002...) pra você citar como evidência:`,
     transcript,
-    '',
-    '## O que avaliar',
+    "",
+    "## O que avaliar",
     criteriaText.trim(),
-  ].join('\n');
+  ].join("\n");
 }
 
-// A chamada à IA é não-determinística (a mesma conversa pode gerar textos
-// levemente diferentes entre execuções); a extração do veredito abaixo é pura
-// regex sobre o texto já recebido, sem nova chamada de IA — assim o parser é
-// testável e determinístico mesmo quando o texto do juiz varia.
 function parseVerdict(rawText) {
   const verdictMatch = rawText.match(/VEREDITO:\s*(PASSOU|FALHOU)/i);
   const reasonMatch = rawText.match(/MOTIVO:\s*(.+)/i);
   return {
-    verdict: verdictMatch ? verdictMatch[1].toUpperCase() : null, // null = indeterminado (o juiz não seguiu o formato pedido)
+    verdict: verdictMatch ? verdictMatch[1].toUpperCase() : null,
     reason: reasonMatch ? reasonMatch[1].trim() : rawText.trim(),
     raw: rawText,
   };
@@ -55,13 +55,15 @@ function parseVerdict(rawText) {
 
 async function buildCriteriaText(persona) {
   if (!persona.criteriaFile) {
-    throw new Error('nenhum critério de avaliação configurado para esta persona (defina criteriaFile)');
+    throw new Error(
+      "nenhum critério de avaliação configurado para esta persona (defina criteriaFile)",
+    );
   }
 
   const criteriaPath = resolveCriteriaPath(persona.criteriaFile);
   let fileCriteria;
   try {
-    fileCriteria = fs.readFileSync(criteriaPath, 'utf-8').trim();
+    fileCriteria = fs.readFileSync(criteriaPath, "utf-8").trim();
   } catch {
     throw new Error(`arquivo de critério não encontrado: ${criteriaPath}`);
   }
@@ -75,7 +77,7 @@ async function buildCriteriaText(persona) {
 async function evaluateConversation(persona, history) {
   const criteriaText = await buildCriteriaText(persona);
   const prompt = buildJudgePrompt(persona, history, criteriaText);
-  const raw = await callAI(prompt, 'zapia-juiz');
+  const raw = await callAI(prompt, "judgechat-juiz");
   return parseVerdict(raw);
 }
 

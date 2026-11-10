@@ -1,6 +1,5 @@
-// Helpers de terminal (cores ANSI e prompts via readline) extraídos de cli.js
-// para serem reusados também pelo batch-runner.js, sem duplicar a UX/estilo
-// visual do CLI interativo.
+// Helpers de terminal (cores ANSI e prompts via readline) compartilhados por
+// cli.js e batch-runner.js.
 const { spawn } = require('child_process');
 
 const ansi = {
@@ -17,8 +16,6 @@ const ansi = {
 const paint = (code, text) => `${code}${text}${ansi.reset}`;
 const divider = paint(ansi.dim, '─'.repeat(48));
 
-// ask(question, fallback): imprime a pergunta colorida e devolve a resposta
-// (ou o fallback, se a resposta vier vazia).
 function createAsk(rl) {
   return async (question, fallback) => {
     const hint = fallback ? ` ${paint(ansi.dim, `(${fallback})`)}` : '';
@@ -47,9 +44,6 @@ function createAskMultiline(rl) {
   };
 }
 
-// Abre um arquivo (relatório HTML) no navegador padrão do sistema — mesmo
-// mecanismo usado pelo cli.js na opção "Ver conversas anteriores", agora
-// também usado pelo batch-runner.js pro relatório consolidado da bateria.
 function openInBrowser(filePath) {
   const byPlatform = {
     win32: ['cmd', ['/c', 'start', '', filePath]],

@@ -2,13 +2,13 @@
 .wwebjs_auth/
 .wwebjs_cache/
 reports/
-features/
+features/*
+!features/exemplo-minimo/
 logs/
 massas.json
 
-# criteria/: só os 3 critérios manuais reutilizáveis (ver resetProjeto.js,
-# KEEP_CRITERIA) ficam versionados — o resto é gerado por cenário/bateria.
 criteria/*.md
 !criteria/default.md
-!criteria/modalidades-contrato-permitidas.md
-!criteria/modalidades-servico-permitidas.md
+!criteria/exemplo-*.md
+
+node_modules/

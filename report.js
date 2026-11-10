@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const escapeHtml = (text) =>
   text
@@ -33,11 +34,6 @@ function verdictClass(verdict) {
   return 'unknown';
 }
 
-// Contagem de vereditos de uma lista de resultados — usada tanto pro
-// cabeçalho do relatório consolidado de uma bateria quanto pros badges da
-// tira de execuções e do índice de histórico (ver generateBatteryHistoryIndex
-// e batch-runner.js, que grava essa mesma contagem em runs.json pra não
-// precisar reabrir/recalcular a partir dos relatórios HTML depois).
 function computeVerdictCounts(results) {
   return results.reduce(
     (acc, r) => {
@@ -49,9 +45,6 @@ function computeVerdictCounts(results) {
   );
 }
 
-// dd/mm/yyyy e HH:mm no fuso local de quem gera o relatório — mesmo padrão
-// pt-BR já usado em "gerado em" (generatedAt), só quebrado em partes pra
-// caber nos chips compactos da tira de execuções e da linha do tempo.
 function formatRunWhen(iso) {
   const d = new Date(iso);
   return {
@@ -78,352 +71,16 @@ function renderEvaluation(evaluation) {
   return `<div class="evaluation ${cls}"><p class="eval-eyebrow">avaliação automática</p><p class="eval-score">${escapeHtml(label)}</p><p class="eval-reason">${reason}</p></div>`;
 }
 
-// CSS compartilhado entre o relatório de uma conversa (generateHtmlReport) e
-// o relatório consolidado de uma bateria (generateBatchHtmlReport), pra não
-// duplicar o tema "terminal cyberpunk" nos dois templates.
-function sharedStyles() {
-  return `
-  :root {
-    --bg: #060812;
-    --surface: #0d1120;
-    --surface-alt: #10162b;
-    --line: #202a4a;
-    --cyan: #2fd8ff;
-    --magenta: #ff4fb0;
-    --amber: #ffcf5c;
-    --text: #e7ecf9;
-    --muted: #6b7699;
-    --mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, ui-monospace, monospace;
-    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-
-  body {
-    min-height: 100vh;
-    background: var(--bg);
-    background-image:
-      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(47, 216, 255, 0.12), transparent 70%),
-      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
-    color: var(--text);
-    font-family: var(--sans);
-  }
-
-  [tabindex]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-
-  .header {
-    padding: 26px clamp(16px, 5vw, 48px) 20px;
-    border-bottom: 1px solid var(--line);
-  }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin: 0 0 8px;
-  }
-  .title {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: clamp(22px, 3.6vw, 32px);
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    color: var(--text);
-    text-shadow: 0 0 16px rgba(47, 216, 255, 0.6), 0 0 40px rgba(47, 216, 255, 0.25);
-    margin: 0 0 6px;
-    text-wrap: balance;
-    border-bottom: 2px solid var(--cyan);
-    box-shadow: 0 8px 12px -8px rgba(47, 216, 255, 0.7);
-    padding-bottom: 4px;
-  }
-  .brief {
-    font-size: 13.5px;
-    color: var(--muted);
-    max-width: 60ch;
-    line-height: 1.5;
-    margin: 8px 0 14px;
-  }
-  .stats {
-    display: flex;
-    gap: 20px;
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .stats strong { color: var(--text); font-weight: 600; }
-
-  .chat {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .row { display: flex; align-items: flex-end; gap: 8px; }
-  .row.cliente { justify-content: flex-end; }
-  .row.agente { justify-content: flex-start; }
-
-  .avatar {
-    flex: none;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    background: var(--surface);
-    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-  }
-  .avatar.cliente { color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.6), 0 0 10px rgba(47, 216, 255, 0.45); }
-  .avatar.agente { color: var(--magenta); box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.6), 0 0 10px rgba(255, 79, 176, 0.45); }
-
-  .bubble {
-    max-width: 82%;
-    min-width: 0;
-    padding: 9px 14px;
-    background: var(--surface);
-  }
-  .bubble.cliente {
-    background: var(--surface);
-    box-shadow: inset 0 0 0 1px rgba(47, 216, 255, 0.45), 0 0 16px rgba(47, 216, 255, 0.15);
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
-  }
-  .bubble.agente {
-    background: var(--surface-alt);
-    box-shadow: inset 0 0 0 1px rgba(255, 79, 176, 0.45), 0 0 16px rgba(255, 79, 176, 0.15);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-  }
-
-  .meta { display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px; }
-  .meta .author {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-  .cliente .author { color: var(--cyan); }
-  .agente .author { color: var(--magenta); }
-  .meta .tag { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
-
-  .text {
-    font-size: 14px;
-    line-height: 1.4;
-    color: var(--text);
-    word-break: break-word;
-  }
-
-  .empty {
-    text-align: center;
-    font-family: var(--mono);
-    color: var(--muted);
-    padding: 56px 16px;
-    border: 1px dashed var(--line);
-  }
-
-  .evaluation {
-    margin-top: 16px;
-    padding: 12px 16px;
-    max-width: 60ch;
-    background: var(--surface);
-    border-left: 3px solid var(--muted);
-  }
-  .evaluation.good { border-left-color: #4ade80; }
-  .evaluation.bad { border-left-color: #f87171; }
-  .eval-eyebrow {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 4px;
-  }
-  .eval-score {
-    font-family: var(--mono);
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0 0 4px;
-  }
-  .good .eval-score { color: #4ade80; }
-  .bad .eval-score { color: #f87171; }
-  .unknown .eval-score { color: var(--muted); }
-  .eval-reason {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.4;
-    margin: 0;
-  }
-
-  .gherkin { margin: 14px 0 0; max-width: 70ch; }
-  .gherkin-summary {
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 4px 0;
-  }
-  .gherkin-summary:hover { color: var(--cyan); }
-  .gherkin-text {
-    margin: 8px 0 0;
-    padding: 12px 14px;
-    background: var(--surface);
-    border-left: 3px solid var(--cyan);
-    font-family: var(--mono);
-    font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .batch { max-width: 1080px; margin: 0 auto; padding: clamp(18px, 4vw, 32px) clamp(16px, 4vw, 40px) 48px; }
-  .batch table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .batch th, .batch td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .batch th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .batch td.reason { color: var(--text); max-width: 44ch; }
-  .batch td.numero { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .batch td a { color: var(--cyan); text-decoration: none; }
-  .batch td a:hover { text-decoration: underline; }
-  .badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 3px 10px;
-    border-radius: 2px;
-  }
-  .badge.good { color: #4ade80; box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.5); }
-  .badge.bad { color: #f87171; box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.5); }
-  .badge.unknown { color: var(--muted); box-shadow: inset 0 0 0 1px rgba(107, 118, 153, 0.5); }
-  .badge.erro { color: var(--amber); box-shadow: inset 0 0 0 1px rgba(255, 207, 92, 0.5); }
-  .badge.sm { font-size: 10px; padding: 2px 7px; }`;
-}
-
-// CSS extra, só usado pelo relatório consolidado de bateria (tira de
-// execuções + linha do tempo por cenário) e pelo índice de histórico — fica
-// separado de sharedStyles() pra não inchar o relatório individual de
-// conversa (generateHtmlReport), que nunca usa nada disto.
-function historyStyles() {
-  return `
-  .run-strip-wrap { max-width: 1080px; margin: 0 auto; padding: 4px clamp(16px, 4vw, 40px) 0; }
-  .strip-row { display: flex; align-items: center; gap: 10px; }
-  .run-strip { flex: 1; display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 10px; }
-  .strip-chip {
-    flex: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 7px 12px;
-    background: var(--surface-alt);
-    border: 1px solid var(--line);
-    text-decoration: none;
-  }
-  .strip-chip .strip-date { font-family: var(--mono); font-size: 10.5px; color: var(--text); font-variant-numeric: tabular-nums; }
-  .strip-chip .strip-counts { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
-  .strip-chip.is-current { border-color: var(--amber); background: rgba(255, 207, 92, 0.08); cursor: default; }
-  .history-link { font-family: var(--mono); font-size: 11px; color: var(--cyan); text-decoration: none; white-space: nowrap; margin-left: auto; padding-left: 12px; }
-  .history-link:hover { text-decoration: underline; }
-
-  .scenario-card { border-bottom: 1px solid var(--line); }
-  .scenario-card:last-child { border-bottom: none; }
-  .scenario-card summary {
-    cursor: pointer;
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: start;
-    gap: 14px;
-    padding: 12px 4px;
-  }
-  .scenario-card summary::-webkit-details-marker { display: none; }
-  .scenario-card summary::before {
-    content: "▸";
-    font-family: var(--mono);
-    color: var(--muted);
-    margin-right: 8px;
-    display: inline-block;
-  }
-  .scenario-card[open] summary::before { transform: rotate(90deg); color: var(--magenta); }
-  .scen-main { min-width: 0; }
-  .scen-name { font-size: 13.5px; color: var(--text); font-weight: 600; }
-  .scen-reason { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; max-width: 62ch; }
-  .scen-numero { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .scen-link { font-family: var(--mono); font-size: 12px; color: var(--cyan); text-decoration: none; white-space: nowrap; align-self: center; }
-  .scen-link:hover { text-decoration: underline; }
-  .timeline { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 4px 16px 26px; }
-  .tl-chip {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-    padding: 6px 10px;
-    background: var(--surface-alt);
-    border: 1px solid var(--line);
-    min-width: 78px;
-    text-decoration: none;
-  }
-  .tl-chip.is-latest { border-color: var(--magenta); }
-  .tl-date { font-family: var(--mono); font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
-
-  .run-list { display: flex; flex-direction: column; }
-  .run-card {
-    display: grid;
-    grid-template-columns: 20px 150px 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 13px 4px;
-    border-bottom: 1px solid var(--line);
-  }
-  .run-card:last-child { border-bottom: none; }
-  .run-card input[type="checkbox"] { accent-color: var(--cyan); width: 15px; height: 15px; }
-  .run-when { display: flex; flex-direction: column; gap: 1px; }
-  .run-date { font-family: var(--mono); font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
-  .run-time { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .run-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-  .run-link { font-family: var(--mono); font-size: 12px; color: var(--cyan); text-decoration: none; white-space: nowrap; }
-  .run-link:hover { text-decoration: underline; }
-  .compare-bar { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }
-  .compare-bar span { font-size: 12px; color: var(--muted); }
-  .compare-btn {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: var(--bg);
-    background: var(--cyan);
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-  }
-  .compare-btn:disabled { background: var(--surface-alt); color: var(--muted); cursor: not-allowed; }
-  .compare-table-wrap { margin-top: 24px; }
-  .compare-caption { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }
-  .compare-table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .compare-table-wrap th, .compare-table-wrap td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
-  .compare-table-wrap th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .compare-table-wrap td a { color: var(--cyan); text-decoration: none; font-family: var(--mono); font-size: 12px; }
-  .compare-table-wrap tr.diff-row td:first-child { border-left: 3px solid var(--amber); padding-left: 9px; }`;
-}
-
+const readStyles = (file) => fs.readFileSync(path.join(__dirname, 'report-styles', file), 'utf-8');
+const sharedStyles = () => readStyles('shared.css');
+const historyStyles = () => readStyles('history.css');
 function generateHtmlReport(outputPath, persona, history, evaluation) {
   const messages = history.map((turn, i) => renderMessage(turn, persona.name, i)).join('');
   const generatedAt = new Date().toLocaleString('pt-BR');
   const count = String(history.length).padStart(3, '0');
   const evaluationHtml = renderEvaluation(evaluation);
   const gherkinHtml = renderGherkinScenario(persona.gherkinScenario);
-  // targetNumber é o número/telefone (WhatsApp real ou fictício do modo
-  // Debug API) usado NESTA conversa — ausente só em execuções muito antigas
+  // targetNumber é o número de WhatsApp usado NESTA conversa — ausente só em execuções muito antigas
   // de antes desse campo existir.
   const numeroStat = persona.targetNumber ? `<span>número <strong>${escapeHtml(persona.targetNumber)}</strong></span>` : '';
 
@@ -448,8 +105,6 @@ function generateHtmlReport(outputPath, persona, history, evaluation) {
 // na cor de alerta (âmbar), diferente de PASSOU/FALHOU/indeterminado.
 const SPECIAL_VERDICT_LABELS = { ERRO_TECNICO: 'ERRO TÉCNICO', ABORTADO: 'ABORTADO' };
 
-// small=true usa a variante compacta (.badge.sm) — chips de linha do tempo e
-// cartões do índice de histórico, onde o badge de tamanho normal não cabe.
 function verdictBadge(verdict, small) {
   const sizeClass = small ? 'badge sm' : 'badge';
   if (SPECIAL_VERDICT_LABELS[verdict]) {
@@ -460,9 +115,6 @@ function verdictBadge(verdict, small) {
   return `<span class="${sizeClass} ${cls}">${escapeHtml(label)}</span>`;
 }
 
-// Link de um resultado (individual, de um chip de linha do tempo, ou de uma
-// célula da tabela de comparação) — ver conversa se reportFile existe,
-// senão a payload técnica de ERRO_TECNICO, senão nada.
 function resultHref(entry) {
   if (!entry) return null;
   if (entry.reportFile) return `./${entry.reportFile}`;
@@ -470,11 +122,6 @@ function resultHref(entry) {
   return null;
 }
 
-// Tira de chips no topo do relatório consolidado, uma por execução já
-// rodada desta bateria (mais antiga primeiro, a atual sempre por último e
-// sem link — "você está aqui"), mais um link pro índice completo
-// (generateBatteryHistoryIndex). priorRuns vem de batteryHistory.js
-// (runs.json), current é só { timestamp, counts } da execução atual.
 function renderRunStrip(priorRuns, current, historyIndexFile) {
   const total = priorRuns.length + 1;
   const chipHtml = (run, isCurrent) => {
@@ -493,10 +140,6 @@ function renderRunStrip(priorRuns, current, historyIndexFile) {
   return `<div class="run-strip-wrap"><div class="strip-row"><div class="run-strip">${chips}</div>${historyLink}</div></div>`;
 }
 
-// Chips da linha do tempo de UM cenário — uma por execução anterior em que
-// ele apareceu (nem toda execução roda todo cenário: um reaproveitado de
-// results.json fica de fora se essa execução específica não tiver sido
-// gravada em runs.json ainda), mais o resultado atual por último.
 function renderScenarioTimeline(scenarioSlug, priorRuns, currentResult) {
   const chips = [];
   for (const run of priorRuns) {
@@ -512,10 +155,6 @@ function renderScenarioTimeline(scenarioSlug, priorRuns, currentResult) {
   return chips.join('');
 }
 
-// Uma linha do relatório consolidado = um <details> por cenário: o cabeçalho
-// (summary) mostra exatamente o que a tabela de sempre mostrava, e o corpo
-// esconde a linha do tempo (só some quando expandida, igual ao
-// <details class="gherkin"> do relatório individual — mesmo idioma visual).
 function renderScenarioRow(r, priorRuns) {
   const href = resultHref(r);
   const linkText = r.reportFile ? 'ver conversa →' : r.errorPayloadFile ? 'ver payload técnica →' : null;
@@ -527,13 +166,11 @@ function renderScenarioRow(r, priorRuns) {
 }
 
 // results: [{ scenarioName, scenarioSlug, numero, verdict: 'PASSOU'|'FALHOU'|null|'ERRO_TECNICO'|'ABORTADO', reason, reportFile, errorPayloadFile }]
-// numero é o telefone/instância usado NAQUELE cenário — o número de WhatsApp
-// da bateria inteira no modo WhatsApp, ou o telefone fictício individual
-// (ou o real de uma massa de teste) no modo Debug API.
+// numero é o número de WhatsApp usado NAQUELE cenário (o da bateria inteira).
 // reportFile é o nome do arquivo HTML individual, salvo na MESMA pasta reports/
 // (link relativo) — null quando o cenário não chegou a gerar relatório.
 // errorPayloadFile (só em ERRO_TECNICO) é o caminho relativo a reports/ do
-// JSON com a payload técnica completa da falha (request/response HTTP,
+// JSON com a payload técnica completa da falha (
 // histórico parcial da conversa) — ver batch-runner.js (appendErrorPayload).
 // batteryMeta: { name, timestamp (ISO desta execução), historyIndexFile
 // (nome do arquivo gerado por generateBatteryHistoryIndex, opcional) }.
@@ -566,9 +203,6 @@ function generateBatchHtmlReport(outputPath, batteryMeta, results, priorRuns = [
   return outputPath;
 }
 
-// allRuns: TODAS as execuções desta bateria, já incluindo a atual (vem de
-// batteryHistory.js logo depois do appendRun), em ordem cronológica
-// (mais antiga primeiro) — esta função inverte pra mostrar mais recente
 // primeiro na tela. Cada run: { timestamp, reportFile, counts, scenarios:
 // [{ scenarioSlug, scenarioName, verdict, reason, reportFile,
 // errorPayloadFile, numero }] }.
@@ -664,8 +298,6 @@ function generateBatteryHistoryIndex(outputPath, batteryMeta, allRuns) {
 
   checkboxes.forEach(function (cb) {
     cb.addEventListener('change', function () {
-      // trava em no máximo 2 marcadas — desmarca a outra que já estava
-      // selecionada em vez de deixar acumular.
       if (selectedIndices().length > 2) {
         var toUncheck = checkboxes.find(function (other) { return other !== cb && other.checked; });
         if (toUncheck) toUncheck.checked = false;

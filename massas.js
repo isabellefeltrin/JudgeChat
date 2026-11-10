@@ -12,10 +12,6 @@ function loadMassas() {
   }
 }
 
-function saveMassas(massas) {
-  fs.writeFileSync(MASSAS_PATH, JSON.stringify(massas, null, 2) + "\n");
-}
-
 function resolveMassas(massaIds) {
   const massas = loadMassas();
   const missing = massaIds.filter((massaId) => !massas[massaId]?.phone);
@@ -61,7 +57,6 @@ function formatMassaContext(massaId, massaData) {
 module.exports = {
   MASSAS_PATH,
   loadMassas,
-  saveMassas,
   resolveMassas,
   formatMassaContext,
 };

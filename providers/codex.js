@@ -1,8 +1,5 @@
 // Provedor "codex": chama direto a API HTTP da OpenAI (Chat Completions),
-// sem depender do CLI `codex` instalado — só precisa de OPENAI_API_KEY no
-// .env. O nome do provedor é "codex" (o produto que a Next Fit está
-// conectando), mas por baixo é a mesma API de chat da OpenAI; troque
-// OPENAI_MODEL se quiser um modelo diferente do padrão.
+// sem depender do CLI `codex` — só precisa de OPENAI_API_KEY no .env.
 const API_KEY = process.env.OPENAI_API_KEY;
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4.1';
 
